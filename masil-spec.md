@@ -1,12 +1,12 @@
 # MASIL v1.0
 
-> **M**arkup **L**anguage for **A**I **S**ystem **I**ntegration\*
+> **M**inder **A**I **S**tructured **I**nteractive **L**anguage\*
 
 ---
 
 ## Overview
 
-MASIL (Markup Language for AI System Integration) is an XML-based markup language designed to facilitate structured interactions between AI systems, web interfaces, and data components. It provides a standardized way to define AI behaviors, manage data, and handle web presentation layers while maintaining clear separation of concerns.
+MASIL (Minder AI Structured Interactive Language) is an XML-based markup language designed to facilitate structured interactions between AI systems, web interfaces, and data components. It provides a standardized way to define AI behaviors, manage data, and handle web presentation layers while maintaining clear separation of concerns.
 
 ## Schema
 
