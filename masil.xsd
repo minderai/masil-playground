@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://masil.org/schema/v1" targetNamespace="http://masil.org/schema/v1" elementFormDefault="qualified">
+
+    <!-- Root element -->
+    <xs:element name="masil">
+        <xs:complexType>
+            <xs:sequence>
+                <!-- Allow XML comments -->
+                <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+
+                <!-- Main components in order -->
+                <xs:element name="masil-ai" minOccurs="1" maxOccurs="1">
+                    <xs:complexType mixed="true">
+                        <xs:sequence>
+                            <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <xs:element name="masil-data" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType mixed="true">
+                        <xs:sequence>
+                            <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                        <xs:attribute name="type" type="xs:string" use="optional"/>
+                    </xs:complexType>
+                </xs:element>
+
+                <xs:element name="masil-web" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <!-- Web components -->
+                            <xs:element name="masil-data" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType mixed="true">
+                                    <xs:sequence>
+                                        <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+                                    </xs:sequence>
+                                    <xs:attribute name="name" type="xs:string" use="required"/>
+                                    <xs:attribute name="type" type="xs:string" use="optional"/>
+                                </xs:complexType>
+                            </xs:element>
+
+                            <xs:element name="markdown" minOccurs="0" maxOccurs="unbounded" type="markdownType"/>
+                            <xs:element name="style" minOccurs="0" maxOccurs="unbounded" type="styleType"/>
+                            <xs:element name="script" minOccurs="0" maxOccurs="unbounded" type="scriptType"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+
+            <!-- Root attributes -->
+            <xs:attribute name="version" type="xs:string" use="required"/>
+            <xs:attribute name="masil-strict" type="xs:boolean" use="required"/>
+            <xs:attribute name="xmlns" type="xs:string" fixed="http://masil.org/schema/v1"/>
+            <xs:attribute name="xmlns:xsi" type="xs:string" fixed="http://www.w3.org/2001/XMLSchema-instance"/>
+            <xs:attribute name="xsi:schemaLocation" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Complex types for web components -->
+    <xs:complexType name="markdownType" mixed="true">
+        <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="styleType" mixed="true">
+        <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="scriptType" mixed="true">
+        <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+</xs:schema> 

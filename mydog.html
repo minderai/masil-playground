@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@faker-js/faker/dist/faker.min.js"></script>
+    <title>[title]</title>
+    <style>
+        /* Apply smooth transitions to all elements */
+        * {
+            transition: all 0.5s ease;
+        }
+
+        /* Make table headers clickable */
+        th {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Theme transition */
+        * {
+            transition: all 0.3s ease;
+        }
+
+        /* Skeleton loading styles */
+        .skeleton {
+            background: #f0f0f0;
+            animation: pulse 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        .skeleton-table-row {
+            height: 40px;
+            margin: 8px 0;
+        }
+
+        .skeleton-chart {
+            height: 300px;
+            margin: 16px 0;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.6;
+            }
+        }
+
+        /* Hide content while loading */
+        .loading {
+            visibility: hidden;
+        }
+
+        /* Page loading overlay */
+        #pageLoadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3273dc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="pageLoadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+    <section class="section">
+        <div class="container content">
+            <!-- Add theme toggle button -->
+            <div class="is-flex is-justify-content-flex-end p-3">
+                <button class="button is-rounded" id="theme-toggle" aria-label="Toggle theme">
+                    <span class="icon is-small">
+                        <i class="fas fa-sun"></i>
+                    </span>
+                </button>
+            </div>
+            <div class="box content">
+                <h1 id="mainTitle">[title]</h1>
+                <h3>test of styles from masil</h3>
+                <p id="welcomeText">Welcome to [title]!</p>
+
+                <!-- Dog data section -->
+                <div class="box">
+                    <div class="level">
+                        <div class="level-left">
+                            <button id="randomBreedButton" class="button is-primary">
+                                Random Breed
+                            </button>
+                            <div id="randomBreedResult" class="ml-4 content"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box">
+                    <h3 class="title is-4">Dog Database</h3>
+                    <!-- Skeleton loader for table -->
+                    <div id="tableSkeleton">
+                        <div class="skeleton skeleton-table-row"></div>
+                        <div class="skeleton skeleton-table-row"></div>
+                        <div class="skeleton skeleton-table-row"></div>
+                    </div>
+
+                    <div class="table-container loading" id="tableContainer">
+                        <table id="dogTable" class="table is-striped is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <!-- Headers will be populated by JavaScript -->
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Skeleton loader for chart -->
+                    <div id="chartSkeleton" class="mt-4">
+                        <div class="skeleton skeleton-chart"></div>
+                    </div>
+
+                    <div class="mt-4 loading" id="chartContainer">
+                        <canvas id="ageChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Markdown section -->
+                <div class="box">
+                    <h3 class="title is-4">Markdown Content</h3>
+                    <masil-markdown header></masil-markdown>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add footer with imported AI component -->
+    <div class="container box content">
+        <footer class="footer">
+            <div class="content">
+                <h3>Footer Component</h3>
+                <masil-markdown footer></masil-markdown>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Add help section at bottom -->
+    <div class="container content box">
+        <h2>Help for users</h2>
+        <masil-markdown help-for-users></masil-markdown>
+    </div>
+
+    <script>
+        // At the top level, before any class definitions
+        let sharedPlaceholders = {};
+
+        let dogManagerReady = new Promise(resolve => {
+            window.resolveDogManager = resolve;
+        });
+
+        class DogDataManager {
+            constructor() {
+                this.dogData = [];
+                this.converter = new showdown.Converter();
+                this.sortColumn = 'Name';
+                this.sortDirection = 'asc';
+                this.apiConfig = null;
+                this.uiConfig = null;
+                this.placeholders = {};
+                this.initialized = false;
+            }
+
+            async getRawContent() {
+                const response = await fetch('mydog.masil');
+                return await response.text();
+            }
+
+            async loadPlaceholders() {
+                const text = await this.getRawContent();
+                const errorMessage = 'Error: incorrect placeholders. You must have exactly these tags in the file, `placeholders` and `/placeholders`';
+
+                // Function to display error and stop processing
+                const showError = (message) => {
+                    const errorHtml = `
+                        <div class="container section">
+                            <div class="notification is-danger">
+                                <button class="delete"></button>
+                                <h4 class="title is-4">MASIL Validation Error</h4>
+                                <p style="white-space: pre-wrap;">${message}</p>
+                            </div>
+                        </div>
+                    `;
+
+                    document.body.innerHTML = errorHtml;
+
+                    const deleteBtn = document.querySelector('.delete');
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', () => {
+                            deleteBtn.closest('.notification').remove();
+                        });
+                    }
+
+                    console.error(message);
+                    throw new Error(message);
+                };
+
+                // Check for backtick placeholders format first
+                if (!text.includes('`placeholders`') || !text.includes('`/placeholders`')) {
+                    showError(errorMessage);
+                    return {};
+                }
+
+                // Then check XML placeholders section
+                const placeholdersMatch = text.match(/<placeholders>([\s\S]*?)<\/placeholders>/);
+
+                if (!placeholdersMatch) {
+                    showError(errorMessage);
+                    return {};
+                }
+
+                const section = placeholdersMatch[1].trim();
+
+                // Process each line
+                section.split('\n').forEach((line, index) => {
+                    line = line.trim();
+                    if (line && !line.startsWith('#')) {
+                        // Check for exact "name: value" format
+                        if (!line.includes(':')) {
+                            showError(`Error: missing colon in placeholder line ${index + 1}: "${line}"\nFormat must be "name: value"\n(Line numbers are counted from inside <placeholders> section)`);
+                            return {};
+                        }
+
+                        const [key, value] = line.split(':').map(s => s.trim());
+                        if (!key || !value) {
+                            showError(`Error: invalid format in placeholder line ${index + 1}: "${line}"\nFormat must be "name: value"\n(Line numbers are counted from inside <placeholders> section)`);
+                            return {};
+                        }
+
+                        if (!key.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
+                            showError(`Error: invalid name in placeholder line ${index + 1}: "${key}"\nName must start with letter or underscore\n(Line numbers are counted from inside <placeholders> section)`);
+                            return {};
+                        }
+
+                        this.placeholders[key] = value;
+                        console.log(`Loaded placeholder: ${key} = ${value}`);
+                    }
+                });
+
+                if (Object.keys(this.placeholders).length === 0) {
+                    showError(errorMessage);
+                    return {};
+                }
+
+                return this.placeholders;
+            }
+
+            async getXMLDoc() {
+                const text = await this.getRawContent();
+                let processedText = text;
+
+                // Replace all placeholders in the content
+                Object.entries(this.placeholders).forEach(([key, value]) => {
+                    const regex = new RegExp(`\\[${key}\\]`, 'g');
+                    processedText = processedText.replace(regex, value);
+                });
+
+                const parser = new DOMParser();
+                return parser.parseFromString(processedText, 'application/xml');
+            }
+
+            async populateTable() {
+                const xmlDoc = await this.getXMLDoc();
+                const dogsData = xmlDoc.querySelector('masil-data[name="dogs"]');
+                if (!dogsData) return;
+
+                const csvData = dogsData.textContent.trim();
+                const lines = csvData.split('\n');
+                const headers = lines[0].split(',').map(h => h.trim());
+
+                this.dogData = lines.slice(1).map(line => {
+                    const values = line.split(',');
+                    return headers.reduce((obj, header, index) => {
+                        const value = values[index].trim();
+                        obj[header] = isNaN(value) ? value : Number(value);
+                        return obj;
+                    }, {});
+                });
+
+                this.renderTable();
+                this.renderChart();
+            }
+
+            handleSort(column) {
+                if (this.sortColumn === column) {
+                    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    this.sortColumn = column;
+                    this.sortDirection = 'asc';
+                }
+                this.renderTable();
+            }
+
+            getSortedData() {
+                return [...this.dogData].sort((a, b) => {
+                    const aVal = a[this.sortColumn];
+                    const bVal = b[this.sortColumn];
+
+                    if (typeof aVal === 'number' && typeof bVal === 'number') {
+                        return this.sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
+                    }
+
+                    return this.sortDirection === 'asc'
+                        ? String(aVal).localeCompare(String(bVal))
+                        : String(bVal).localeCompare(String(aVal));
+                });
+            }
+
+            renderTable() {
+                // Default table configuration
+                const defaultTableConfig = {
+                    columns: ['Name', 'Age', 'Color', 'Breed', 'Lifespan', 'Temperament'],
+                    sortable: true,
+                    striped: true,
+                    hoverable: true
+                };
+
+                const thead = document.querySelector('#dogTable thead tr');
+                const tbody = document.querySelector('#dogTable tbody');
+
+                if (!thead || !tbody) {
+                    console.error('Table elements not found');
+                    return;
+                }
+
+                // Always use the default columns
+                const columns = defaultTableConfig.columns;
+
+                // Generate table headers
+                thead.innerHTML = columns.map(header => {
+                    const sortIndicator = this.sortColumn === header
+                        ? this.sortDirection === 'asc' ? ' ↑' : ' ↓'
+                        : '';
+                    return `
+                        <th onclick="dogManager.handleSort('${header}')"
+                            style="cursor: pointer;">
+                            ${header}${sortIndicator}
+                        </th>
+                    `;
+                }).join('');
+
+                // Apply table classes
+                const table = document.querySelector('#dogTable');
+                if (table) {
+                    table.classList.add('is-striped', 'is-hoverable');
+                }
+
+                // Render sorted data
+                tbody.innerHTML = this.getSortedData().map(dog => `
+                    <tr>
+                        <td>${dog.Name}</td>
+                        <td>${dog.Age}</td>
+                        <td>${dog.Color}</td>
+                        <td>${dog.Breed}</td>
+                        <td>${dog.Lifespan}</td>
+                        <td>${dog.Temperament}</td>
+                    </tr>
+                `).join('');
+
+                // After table is rendered, show it and hide skeleton
+                document.getElementById('tableSkeleton').style.display = 'none';
+                document.getElementById('tableContainer').classList.remove('loading');
+            }
+
+            renderChart() {
+                // Get chart type from UI config
+                const chartConfig = this.uiConfig?.display?.chart || {
+                    type: 'bar',
+                    labels: {
+                        xAxis: 'Dog Names',
+                        yAxis: 'Years'
+                    }
+                };
+
+                const ctx = document.getElementById('ageChart').getContext('2d');
+                new Chart(ctx, {
+                    type: chartConfig.type,
+                    data: {
+                        labels: this.dogData.map(dog => dog.Name),
+                        datasets: [{
+                            label: 'Age',
+                            data: this.dogData.map(dog => dog.Age),
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }, {
+                            label: 'Lifespan',
+                            data: this.dogData.map(dog => dog.Lifespan),
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: chartConfig.labels?.xAxis || 'Dog Names'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: chartConfig.labels?.yAxis || 'Years'
+                                },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // After chart is rendered, show it and hide skeleton
+                document.getElementById('chartSkeleton').style.display = 'none';
+                document.getElementById('chartContainer').classList.remove('loading');
+            }
+
+            async replacePlaceholders() {
+                const xmlDoc = await this.getXMLDoc();
+                const content = xmlDoc.documentElement.innerHTML;
+
+                // Find the placeholders section
+                const placeholdersStart = content.indexOf('placeholders:');
+                if (placeholdersStart !== -1) {
+                    // Get the text from placeholders: to the next section
+                    const nextSectionMatch = content.slice(placeholdersStart).match(/\n\w+:/);
+                    const endIndex = nextSectionMatch ? placeholdersStart + nextSectionMatch.index : content.length;
+                    const placeholdersSection = content.slice(placeholdersStart, endIndex);
+
+                    // Process each line in the placeholders section
+                    const lines = placeholdersSection.split('\n');
+                    for (let i = 1; i < lines.length; i++) { // Start from 1 to skip "placeholders:" line
+                        const line = lines[i].trim();
+
+                        // Skip empty lines and comments
+                        if (!line || line.startsWith('#')) continue;
+
+                        // Check if this line starts a new section
+                        if (line.match(/^\w+:$/) || line.match(/^[a-zA-Z_]+:$/)) break;
+
+                        // Extract key and value
+                        const colonIndex = line.indexOf(':');
+                        if (colonIndex > 0) {
+                            const key = line.substring(0, colonIndex).trim();
+                            const value = line.substring(colonIndex + 1).trim();
+
+                            if (key && value) {
+                                console.log(`Found placeholder: ${key} = ${value}`);
+                                sharedPlaceholders[key] = value;
+
+                                // Update DOM elements that use this placeholder
+                                if (key === 'title') {
+                                    const mainTitle = document.getElementById('mainTitle');
+                                    const welcomeText = document.getElementById('welcomeText');
+                                    if (mainTitle) mainTitle.textContent = value;
+                                    if (welcomeText) welcomeText.textContent = `Welcome to ${value}!`;
+                                    document.title = value;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                console.log('All loaded placeholders:', sharedPlaceholders);
+            }
+
+            async applyMasilStyles() {
+                try {
+                    const xmlDoc = await this.getXMLDoc();
+                    // Look for style tags in masil-web section
+                    const styleMatches = xmlDoc.querySelectorAll('masil-web style');
+
+                    styleMatches.forEach(styleElement => {
+                        const styleContent = styleElement.textContent
+                            .replace(/\/\*[\s\S]*?\*\//g, '')  // Remove comments
+                            .replace(/^\s*[\r\n]/gm, '')       // Remove empty lines
+                            .trim();
+
+                        if (styleContent) {
+                            const newStyleElement = document.createElement('style');
+                            // Replace h3 selector to be more specific to avoid conflicts
+                            newStyleElement.textContent = styleContent.replace(/h3\s*{/g, '.box.content h3 {');
+                            document.head.appendChild(newStyleElement);
+                            console.log('Injected styles:', newStyleElement.textContent);
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error injecting styles:', error);
+                }
+            }
+
+            async loadConfigs() {
+                const xmlDoc = await this.getXMLDoc();
+
+                // Load API config
+                const apiData = xmlDoc.querySelector('masil-data[name="dog-api"]');
+                if (apiData) {
+                    try {
+                        this.apiConfig = JSON.parse(apiData.textContent.trim());
+                        console.log('Loaded API config:', this.apiConfig); // Debug log
+                    } catch (error) {
+                        console.error('Error parsing API config:', error);
+                    }
+                }
+
+                // Load UI config
+                const uiConfigData = xmlDoc.querySelector('masil-data[name="ui-config"]');
+                if (uiConfigData) {
+                    try {
+                        this.uiConfig = JSON.parse(uiConfigData.textContent.trim());
+                        console.log('Loaded UI config:', this.uiConfig); // Debug log
+                    } catch (error) {
+                        console.error('Error parsing UI config:', error);
+                    }
+                }
+            }
+
+            generateRandomBreed() {
+                if (window.faker && this.apiConfig) {
+                    const count = this.apiConfig.params.count || 1;
+                    const moduleCall = this.apiConfig.module;
+
+                    // Convert string "faker.animal.cat()" into actual function call
+                    const parts = moduleCall.replace('()', '').split('.');
+                    let func = window;
+                    for (const part of parts) {
+                        func = func[part];
+                    }
+
+                    const breeds = Array(count).fill(null).map(() => func());
+                    return breeds;
+                }
+                return ['Faker library not loaded'];
+            }
+
+            setupRandomBreeds() {
+                const button = document.getElementById('randomBreedButton');
+                const result = document.getElementById('randomBreedResult');
+
+                if (button && result && this.apiConfig?.params) {  // Check if params exists
+                    button.textContent = this.apiConfig.params.buttonText;
+                    button.className = `button ${this.apiConfig.params.buttonClass}`;
+
+                    button.addEventListener('click', () => {
+                        const breeds = this.generateRandomBreed();
+                        result.innerHTML = `
+                            <strong>Random Breeds:</strong>
+                            <ul>
+                                ${breeds.map(breed => `<li>${breed}</li>`).join('')}
+                            </ul>
+                        `;
+                    });
+                } else {
+                    console.warn('Random breeds feature disabled - missing configuration or DOM elements');
+                }
+            }
+
+            setupTheme() {
+                const themeToggle = document.getElementById('theme-toggle');
+                if (themeToggle) {
+                    themeToggle.addEventListener('click', () => {
+                        // Toggle the icon
+                        const icon = themeToggle.querySelector('i');
+                        icon.classList.toggle('fa-sun');
+                        icon.classList.toggle('fa-moon');
+
+                        // Toggle theme classes
+                        document.documentElement.classList.toggle('theme-dark');
+                        document.body.classList.toggle('theme-dark');
+
+                        // Toggle on all boxes and tables
+                        document.querySelectorAll('.box, .table, .content, .footer').forEach(element => {
+                            element.classList.toggle('theme-dark');
+                        });
+                    });
+                }
+            }
+
+            async replacePlaceholdersInDOM() {
+                // Replace placeholders in text nodes
+                const walker = document.createTreeWalker(
+                    document.body,
+                    NodeFilter.SHOW_TEXT,
+                    null,
+                    false
+                );
+
+                let node;
+                while (node = walker.nextNode()) {
+                    let content = node.textContent;
+                    let hasChanges = false;
+
+                    // Replace all placeholders in this text node
+                    Object.entries(this.placeholders).forEach(([key, value]) => {
+                        const regex = new RegExp(`\\[${key}\\]`, 'g');
+                        if (content.match(regex)) {
+                            content = content.replace(regex, value);
+                            hasChanges = true;
+                        }
+                    });
+
+                    if (hasChanges) {
+                        node.textContent = content;
+                    }
+                }
+
+                // Replace placeholders in attributes
+                document.querySelectorAll('*').forEach(element => {
+                    Array.from(element.attributes).forEach(attr => {
+                        let value = attr.value;
+                        let hasChanges = false;
+
+                        Object.entries(this.placeholders).forEach(([key, placeholder]) => {
+                            const regex = new RegExp(`\\[${key}\\]`, 'g');
+                            if (value.match(regex)) {
+                                value = value.replace(regex, placeholder);
+                                hasChanges = true;
+                            }
+                        });
+
+                        if (hasChanges) {
+                            attr.value = value;
+                        }
+                    });
+                });
+            }
+
+            async initialize() {
+                if (this.initialized) return;
+
+                try {
+                    // Hide the main content until everything is loaded
+                    document.body.style.visibility = 'hidden';
+
+                    await this.loadPlaceholders();
+                    await this.replacePlaceholdersInDOM();
+                    await this.loadConfigs();
+                    await this.populateTable();
+                    await this.applyMasilStyles();
+                    this.setupRandomBreeds();
+                    this.setupTheme();
+                    this.updateTitleElements();
+
+                    this.initialized = true;
+
+                    // Show the content and remove the loading overlay
+                    document.body.style.visibility = 'visible';
+                    const overlay = document.getElementById('pageLoadingOverlay');
+                    if (overlay) {
+                        overlay.style.opacity = '0';
+                        setTimeout(() => overlay.remove(), 500);
+                    }
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                }
+            }
+
+            updateTitleElements() {
+                const titleValue = this.placeholders['title'];
+                if (titleValue) {
+                    // Update main title
+                    const mainTitle = document.getElementById('mainTitle');
+                    if (mainTitle) mainTitle.textContent = titleValue;
+
+                    // Update welcome text
+                    const welcomeText = document.getElementById('welcomeText');
+                    if (welcomeText) welcomeText.textContent = `Welcome to ${titleValue}!`;
+
+                    // Update document title
+                    document.title = titleValue;
+
+                    // Update any h3 with "test of styles"
+                    const styleTestH3 = document.querySelector('h3');
+                    if (styleTestH3 && styleTestH3.textContent.includes('test of styles')) {
+                        styleTestH3.textContent = `${titleValue} - Styles Test`;
+                    }
+                }
+            }
+
+            countDogs() {
+                const count = this.dogData.length;
+                alert(`Number of dogs is: ${count}`);
+                return count;
+            }
+
+            generateRandomDogs() {
+                if (!window.faker) {
+                    console.error('Faker library not loaded');
+                    return [];
+                }
+
+                const dogBreeds = Array(5).fill(null).map(() => window.faker.animal.dog());
+
+                const dogListElement = document.getElementById('randomDogs');
+                if (dogListElement) {
+                    dogListElement.innerHTML = `<ul>
+                        ${dogBreeds.map(breed => `<li>${breed}</li>`).join('')}
+                    </ul>`;
+                }
+
+                return dogBreeds;
+            }
+        }
+
+        // Define the markdown component
+        class MasilMarkdown extends HTMLElement {
+            async connectedCallback() {
+                try {
+                    // Wait for dogManager to be ready
+                    await dogManagerReady;
+
+                    if (!dogManager?.placeholders) {
+                        console.warn('Placeholders not loaded yet');
+                        return;
+                    }
+
+                    const xmlDoc = await dogManager.getXMLDoc();
+                    const masilWeb = xmlDoc.querySelector('masil-web');
+                    if (masilWeb) {
+                        const name = Array.from(this.attributes)[0]?.name;
+                        if (!name) return;
+
+                        const markdown = masilWeb.querySelector(`markdown[name="${name}"]`);
+                        if (markdown) {
+                            let content = markdown.textContent.trim();
+                            const converter = new showdown.Converter();
+                            this.innerHTML = converter.makeHtml(content);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error in MasilMarkdown:', error);
+                }
+            }
+        }
+        customElements.define('masil-markdown', MasilMarkdown);
+
+        // Make the instance globally available for click handlers
+        let dogManager;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                dogManager = new DogDataManager();
+                await dogManager.initialize();
+
+                // Signal that dogManager is ready
+                window.resolveDogManager();
+
+                // Re-render markdown components
+                const markdownComponents = document.querySelectorAll('masil-markdown');
+                for (const element of markdownComponents) {
+                    await element.connectedCallback();
+                }
+            } catch (error) {
+                console.error('Error during initialization:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>
