@@ -1,2 +1,5 @@
 # masil-playground
-A Playground for MASIL  - MInderAI 
+
+A Playground for MASIL - MInderAI
+F
+from windows
