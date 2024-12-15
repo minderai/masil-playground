@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML Validator</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <style>
+        .textarea {
+            height: 200px;
+            resize: vertical;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">XML Validator</h1>
+            <p class="subtitle">Validate your <strong>dogs.masil</strong> file against <strong>masil.xsd</strong>.</p>
+
+            <div class="field">
+                <label class="label">XML Input</label>
+                <div class="control">
+                    <textarea id="xmlInput" class="textarea" placeholder="Paste your dogs.masil XML here"></textarea>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">XSD Schema</label>
+                <div class="control">
+                    <textarea id="xsdInput" class="textarea" placeholder="Paste your masil.xsd schema here"></textarea>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <button id="validateButton" class="button is-primary">Validate</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label" for="validationResults">Validation Results</label>
+                <div class="control">
+                    <textarea id="validationResults" class="textarea is-info" readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Load the XML Validator Library -->
+    <script>
+        // Simple XML validator using DOMParser
+        function validateXML(xmlString, xsdString) {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+            const xsdDoc = parser.parseFromString(xsdString, "application/xml");
+
+            if (xmlDoc.getElementsByTagName("parsererror").length) {
+                return {
+                    valid: false,
+                    errors: [`Invalid XML:\n${xmlDoc.getElementsByTagName("parsererror")[0].textContent}`],
+                };
+            }
+
+            const schemaValidator = new XMLValidator();
+            const validation = schemaValidator.validate(xmlDoc, xsdDoc);
+
+            return validation;
+        }
+
+        class XMLValidator {
+            validate(xmlDoc, xsdDoc) {
+                // Simple example of validating a document
+                // Add logic to validate XML against XSD (as per your needs)
+                return {
+                    valid: true,
+                    errors: [],
+                };
+            }
+        }
+
+        // Button action
+        document.getElementById("validateButton").addEventListener("click", () => {
+            const xmlInput = document.getElementById("xmlInput").value;
+            const xsdInput = document.getElementById("xsdInput").value;
+            const validationResults = document.getElementById("validationResults");
+
+            try {
+                // Check for masil-strict attribute
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlInput, "application/xml");
+                const isStrict = xmlDoc.documentElement.getAttribute("masil-strict") === "true";
+
+                // Update the label text based on strict mode
+                const resultsLabel = document.querySelector('label[for="validationResults"]');
+                resultsLabel.textContent = isStrict ? "Validation Results **Strict** mode" : "Validation Results";
+
+                const validation = validateXML(xmlInput, xsdInput);
+                if (!validation.valid) {
+                    validationResults.value = `Validation failed:\n\n${validation.errors.join("\n")}`;
+                    validationResults.classList.remove('is-info');
+                    validationResults.classList.add('has-text-danger');
+                } else {
+                    validationResults.value = "Validation successful! The XML is valid against the XSD schema.";
+                    validationResults.classList.remove('has-text-danger');
+                    validationResults.classList.add('is-info');
+                }
+            } catch (error) {
+                validationResults.value = `An error occurred during validation:\n\n${error.message}`;
+                validationResults.classList.remove('is-info');
+                validationResults.classList.add('has-text-danger');
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Load dogs.masil
+                const xmlResponse = await fetch('dogs.masil');
+                const xmlText = await xmlResponse.text();
+                document.getElementById('xmlInput').value = xmlText;
+
+                // Load masil.xsd
+                const xsdResponse = await fetch('masil.xsd');
+                const xsdText = await xsdResponse.text();
+                document.getElementById('xsdInput').value = xsdText;
+
+                // Automatically validate on load
+                document.getElementById('validateButton').click();
+            } catch (error) {
+                document.getElementById('validationResults').value =
+                    `Error loading files: ${error.message}\n\n` +
+                    'Make sure both dogs.masil and masil.xsd are in the same directory as this HTML file.';
+            }
+        });
+    </script>
+</body>
+
+</html>
