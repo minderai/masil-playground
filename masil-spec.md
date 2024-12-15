@@ -2,6 +2,10 @@
 
 > **M**inder **A**I **S**tructured **I**nteractive **L**anguage\*
 
+Developed by Rob McCormack, Software Engineer  
+[SimplerTasks Company](https://simplertasks.com)  
+[AIMinder Project](https://aiminder.org)
+
 ---
 
 ## Overview
