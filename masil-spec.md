@@ -204,8 +204,6 @@ ai-guidance
   - Processing model
   - Validation rules
 
-Enter `/help` to see what AI can do.
-
 ## Configuration Options
 
 The optional `<masil-configuration>` element controls system behavior:
