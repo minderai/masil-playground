@@ -1,6 +1,8 @@
-# MASIL Specification
+# MASIL v1.0
 
-**Markup Language for AI System Integration (MASIL) v1.0**
+> **M**arkup **L**anguage for **A**I **S**ystem **I**ntegration\*
+
+---
 
 ## Overview
 
@@ -55,6 +57,7 @@ Example:
 The required AI component can contain:
 
 - Any number of `<masil-data>` elements
+- `<markdown>` elements
 - Any other elements (processed by AI)
 - Mixed content (text and elements)
 
@@ -67,6 +70,11 @@ Example:
             <!-- AI-specific data -->
         </veterinarian>
     </masil-data>
+    <markdown name="greeting">
+        <![CDATA[
+        # Welcome to our veterinary service
+        ]]>
+    </markdown>
     <!-- Other AI-processed content -->
 </masil-ai>
 ```
@@ -100,14 +108,14 @@ Max,5,Labrador
 
 ### 3. Web Component (`<masil-web>`)
 
-The optional web component can contain:
+The optional web component is specifically for browser-side presentation and can contain:
 
 - `<masil-data>` elements
-- `<markdown>` elements
+- `<markdown>` elements (for web display)
 - `<style>` elements
 - `<script>` elements
 
-Each child element requires a `name` attribute.
+Each child element requires a `name` attribute. Content in this section is processed by the web browser rather than the AI system.
 
 Example:
 
