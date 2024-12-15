@@ -57,6 +57,6 @@ SimplerTasks Company
 
 **Media Kit**: [Link to Media Resources]  
 **Technical Documentation**: [Link to Documentation]  
-**GitHub Repository**: [Link to Repository]
+**GitHub Repository**: [Link: to Repository]
 
 Enter `/help` to see what AI can do.
