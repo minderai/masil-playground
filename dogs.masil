@@ -35,6 +35,7 @@ small: 10lbs
  Bulldog
 </list>
 
+# Options for `type` are `tags`, `ordered-list`, or `unordered-list`
 <list name="food" type="ordered-list" value="Popular Dog Foods">
  Royal Canin
  Purina Pro Plan
