@@ -779,11 +779,29 @@
                             const controlsParam = showControls ? '1' : '0';
                             const autoplayParam = autoplay ? '1' : '0';
 
+                            // Add error handling for the iframe
+                            iframe.onerror = () => {
+                                console.error('Failed to load video:', videoId);
+                                iframe.parentElement.innerHTML = `
+                                    <div class="notification is-warning">
+                                        Failed to load video. Please check the video ID.
+                                    </div>
+                                `;
+                            };
+
                             iframe.src = `https://www.youtube.com/embed/${videoId}?si=ejJV4KxhwZHUWhIO&controls=${controlsParam}&autoplay=${autoplayParam}`;
                             iframe.title = videoConfig.youtube.title || 'YouTube video player';
                         }
                     } catch (error) {
                         console.error('Error parsing video config:', error);
+                        const container = document.querySelector('.video-container');
+                        if (container) {
+                            container.innerHTML = `
+                                <div class="notification is-danger">
+                                    Error loading video configuration.
+                                </div>
+                            `;
+                        }
                     }
                 }
             }

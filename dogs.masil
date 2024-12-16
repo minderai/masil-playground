@@ -117,24 +117,29 @@ Charlie,5,green,Husky,12,Stubborn
         <masil-data name="ui-config" type="json">
             <![CDATA[
 {
-"display": {
-"chart": {
-    "type": "line",
-    "labels": {
-        "xAxis": "Doxxg Names",
-        "yAxis": "Years"
+    "display": {
+        "chart": {
+            "type": "line",
+            "labels": {
+                "xAxis": "Doxxg Names",
+                "yAxis": "Years"
+            }
+        }
     }
-}
 }
 ]]>
         </masil-data>
 
-        <!-- Video configuration -->
+        <!-- Video configuration
+You can replace videoId with "nQlqJ9_EzQU" from any YouTube URL like:
+Just copy the ID part between /watch?v= or /youtu.be/ and the next ? or &
+-->
+
         <masil-data name="video-config" type="json">
             <![CDATA[
 {
     "youtube": {
-        "videoId": "mbcpEcGv_WQx",
+        "videoId": "mbcpEcGv_WQ",
         "controls": "0",
         "title": "Dog Training Basics",
         "autoplay": false,
