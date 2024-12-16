@@ -56,7 +56,7 @@
     _by: [doc.author]_
 
     [data-table]
-            <!-- END - AI comments section -->
+                            <!-- END - AI comments section -->
     <masil>
         <masil-data name="dogs">
             <![CDATA[
@@ -98,10 +98,11 @@ Charlie,5,green,Husky,12,Stubborn
 
         <masil-web>
             <!-- Web components -->
-            <markdown name="header">
+            <markdown name="hero">
                 <![CDATA[
-                ## From markdown header
-                [doc.title]
+# [doc.title]
+### Welcome to our Dog Database
+> A comprehensive system for managing and analyzing dog data
                 ]]>
             </markdown>
 

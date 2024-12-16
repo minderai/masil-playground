@@ -109,25 +109,26 @@
 
     <!-- New hero section for main title -->
     <section class="hero is-primary">
-        <div class="hero-body">
+        <div class="hero-head">
             <div class="container">
-                <h1 class="title" id="mainTitle">[doc.title]</h1>
-                <p class="subtitle" id="welcomeText">Welcome to [doc.title]!</p>
+                <div class="is-flex is-justify-content-flex-end p-3">
+                    <button class="button is-dark is-rounded" id="theme-toggle" aria-label="Toggle theme">
+                        <span class="icon is-small">
+                            <i class="fas fa-sun"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="hero-body">
+            <div class="container content">
+                <masil-markdown hero></masil-markdown>
             </div>
         </div>
     </section>
 
     <section class="section">
         <div class="container">
-            <!-- Theme toggle moved to top right -->
-            <div class="is-flex is-justify-content-flex-end mb-4">
-                <button class="button is-rounded" id="theme-toggle" aria-label="Toggle theme">
-                    <span class="icon is-small">
-                        <i class="fas fa-sun"></i>
-                    </span>
-                </button>
-            </div>
-
             <!-- Three column layout -->
             <div class="columns">
                 <!-- Left column -->
@@ -206,11 +207,6 @@
                     <!-- Food list -->
                     <div class="box">
                         <masil-list name="food" type="ol"></masil-list>
-                    </div>
-
-                    <!-- Markdown sections -->
-                    <div class="box">
-                        <masil-markdown header></masil-markdown>
                     </div>
                 </div>
             </div>
@@ -932,10 +928,14 @@
                         const markdown = masilWeb.querySelector(`markdown[name="${name}"]`);
                         if (markdown) {
                             let content = markdown.textContent.trim();
-                            // Strip leading whitespace from each line
-                            content = content.split('\n')
-                                .map(line => line.trimStart())
-                                .join('\n');
+                            // Clean up CDATA and normalize whitespace
+                            content = content
+                                .replace(/\s*<!\[CDATA\[\s*/g, '')
+                                .replace(/\s*\]\]>\s*/g, '')
+                                .split('\n')
+                                .map(line => line.trim())
+                                .join('\n')
+                                .trim();
 
                             const converter = new showdown.Converter({
                                 simplifiedAutoLink: true,
@@ -945,45 +945,18 @@
                                 ghCodeBlocks: true,
                                 parseImgDimensions: true,
                                 strikethrough: true,
-                                ghMentions: true,
-                                openLinksInNewWindow: true,
-                                emoji: true,
-                                underline: true,
-                                completeHTMLDocument: false,
-                                metadata: false,
-                                splitAdjacentBlockquotes: true,
-                                backslashEscapesHTMLTags: true,
-                                requireSpaceBeforeHeadingText: true,
-                                ghMentionsLink: 'https://github.com/{u}',
-                                ghCompatibleHeaderId: true,
-                                encodeEmails: true,
-                                rawHeaderId: true,
-                                rawPrefixHeaderId: true,
-                                headerLevelStart: 1,
-                                disableForced4SpacesIndentedSublists: true,
-                                simpleLineBreaks: true,
-                                smoothLivePreview: true,
-                                smartIndentationFix: true,
-                                literalMidWordUnderscores: true,
-                                literalMidWordAsterisks: true,
-                                customizedHeaderId: true,
-                                noHeaderId: false,
-                                ghCompatibleHeaderId: true,
-                                parseImgDimensions: true,
-                                simplifiedAutoLink: true,
-                                excludeTrailingPunctuationFromURLs: true,
-                                strikethrough: true,
-                                tables: true,
-                                tasklists: true,
-                                ghCodeBlocks: true,
-                                ghMentions: true,
-                                openLinksInNewWindow: true,
-                                emoji: true,
-                                underline: true,
-                                completeHTMLDocument: false,
-                                metadata: false,
-                                splitAdjacentBlockquotes: true
+                                emoji: true
                             });
+
+                            // Replace placeholders before converting
+                            Object.entries(dogManager.placeholders).forEach(([key, value]) => {
+                                const replacementValue = typeof value === 'object' ? value.value : value;
+                                content = content.replace(
+                                    new RegExp(`\\[${key}\\]`, 'g'),
+                                    replacementValue || ''
+                                );
+                            });
+
                             this.innerHTML = converter.makeHtml(content);
                         }
                     }
@@ -1050,7 +1023,7 @@
                             <div class="content">
                                 <h3>${value}</h3>
                                 <div class="tags">
-                                    ${items.map(item => `<span class="tag is-primary">${item}</span>`).join('')}
+                                    ${items.map(item => `<span class="tag is-dark">${item}</span>`).join('')}
                                 </div>
                             </div>
                         `
