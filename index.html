@@ -218,6 +218,30 @@
                 </div>
             </div>
 
+            <!-- ChatGPT Discussions section -->
+            <div class="block has-background-light p-4 mt-6">
+                <details>
+                    <summary class="title is-6 has-text-weight-bold">ChatGPT Discussions</summary>
+                    <div class="content mt-2">
+                        <div class="tabs">
+                            <ul>
+                                <li class="is-active" data-tab="plain-text"><a>Plain Text</a></li>
+                                <li data-tab="markdown-preview"><a>Markdown Preview</a></li>
+                            </ul>
+                        </div>
+
+                        <div id="plain-text" class="tab-content">
+                            <textarea class="textarea" id="chat-text" rows="8"
+                                placeholder="Paste your ChatGPT conversation here..."></textarea>
+                        </div>
+
+                        <div id="markdown-preview" class="tab-content" style="display: none;">
+                            <div class="content" id="markdown-output"></div>
+                        </div>
+                    </div>
+                </details>
+            </div>
+
             <!-- Help section -->
             <div class="block has-background-light p-4 mt-6">
                 <details>
@@ -1102,6 +1126,40 @@
         }
 
         customElements.define('masil-list', MasilList);
+
+        // Tab switching and markdown preview functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tabs li');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const chatText = document.getElementById('chat-text');
+            const markdownOutput = document.getElementById('markdown-output');
+            const converter = new showdown.Converter();
+
+            // Handle tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('is-active'));
+                    // Hide all tab contents
+                    tabContents.forEach(content => content.style.display = 'none');
+
+                    // Activate clicked tab
+                    tab.classList.add('is-active');
+                    const tabId = tab.dataset.tab;
+                    document.getElementById(tabId).style.display = 'block';
+
+                    // Update markdown preview if needed
+                    if (tabId === 'markdown-preview') {
+                        markdownOutput.innerHTML = converter.makeHtml(chatText.value);
+                    }
+                });
+            });
+
+            // Live markdown preview update
+            chatText.addEventListener('input', () => {
+                markdownOutput.innerHTML = converter.makeHtml(chatText.value);
+            });
+        });
     </script>
 </body>
 
