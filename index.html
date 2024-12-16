@@ -610,11 +610,11 @@
                 const xmlDoc = await this.getXMLDoc();
 
                 // Load API config
-                const apiData = xmlDoc.querySelector('masil-data[name="dog-api"]');
-                if (apiData) {
+                const apiConfigData = xmlDoc.querySelector('masil-web masil-data[name="api-config"]');
+                if (apiConfigData) {
                     try {
-                        this.apiConfig = JSON.parse(apiData.textContent.trim());
-                        console.log('Loaded API config:', this.apiConfig); // Debug log
+                        this.apiConfig = JSON.parse(apiConfigData.textContent.trim());
+                        console.log('Loaded API config:', this.apiConfig);
                     } catch (error) {
                         console.error('Error parsing API config:', error);
                     }
@@ -637,7 +637,7 @@
                     const count = this.apiConfig.params.count || 1;
                     const moduleCall = this.apiConfig.module;
 
-                    // Convert string "faker.animal.cat()" into actual function call
+                    // Convert string "faker.animal.dog()" into actual function call
                     const parts = moduleCall.replace('()', '').split('.');
                     let func = window;
                     for (const part of parts) {
@@ -654,27 +654,19 @@
                 const button = document.getElementById('randomBreedButton');
                 const result = document.getElementById('randomBreedResult');
 
-                if (button && result && this.apiConfig?.params) {  // Keep original config check
+                if (button && result && this.apiConfig?.params) {
+                    // Set button text and class from config
                     button.textContent = this.apiConfig.params.buttonText;
                     button.className = `button ${this.apiConfig.params.buttonClass}`;
 
                     button.addEventListener('click', () => {
                         const breeds = this.generateRandomBreed();
-                        const storedBreeds = this.placeholders['list.breeds'];
-
                         result.innerHTML = `
                             <div class="content">
                                 <strong>Random Breeds:</strong>
                                 <ul>
                                     ${breeds.map(breed => `<li>${breed}</li>`).join('')}
                                 </ul>
-                                
-                                <div class="mt-4">
-                                    <h3>${storedBreeds.value}</h3>
-                                    <ol>
-                                        ${storedBreeds.items.map(breed => `<li>${breed}</li>`).join('')}
-                                    </ol>
-                                </div>
                             </div>
                         `;
                     });
