@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <masil xmlns="http://masil.org/schema/v1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://masil.org/schema/v1 masil.xsd" version="1.0" masil-strict="true">
-    <!-- AI comments section -->
+    <!-- START - AI comments section -->
     <doc>
         title: Dog API Demoxx
         author: John Doexx
@@ -44,7 +44,7 @@
 
     intro:
     - AI to introduce to provide a friendly introduction to the user.
-    - AI to reference `<masil-data name="vet-info">` 
+    - AI to reference `masil-data name="vet-info"` 
     - Add this to end of introduction : "I'm a vet not an engineer."
 
     markdown_report:
@@ -56,7 +56,7 @@
     _by: [doc.author]_
 
     [data-table]
-        <!-- END of AI Comment section -->
+            <!-- END - AI comments section -->
     <masil>
         <masil-data name="dogs">
             <![CDATA[

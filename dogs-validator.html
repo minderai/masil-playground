@@ -54,8 +54,18 @@
     <script>
         // Simple XML validator using DOMParser
         function validateXML(xmlString, xsdString) {
+            // Extract the XML declaration and opening masil tag
+            const headerMatch = xmlString.match(/^(<\?xml[^>]*>\s*<masil[^>]*>)/);
+            const header = headerMatch ? headerMatch[1] : '';
+
+            // Find the position of the nested <masil> tag
+            const nestedMasilPos = xmlString.indexOf('<masil>', header.length);
+
+            // Combine the header with everything after the nested masil and add closing tag
+            const cleanedXml = header + xmlString.slice(nestedMasilPos) + '</masil>';
+
             const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+            const xmlDoc = parser.parseFromString(cleanedXml, "application/xml");
             const xsdDoc = parser.parseFromString(xsdString, "application/xml");
 
             if (xmlDoc.getElementsByTagName("parsererror").length) {
@@ -73,12 +83,37 @@
 
         class XMLValidator {
             validate(xmlDoc, xsdDoc) {
-                // Simple example of validating a document
-                // Add logic to validate XML against XSD (as per your needs)
-                return {
-                    valid: true,
-                    errors: [],
-                };
+                // Basic validation checks
+                try {
+                    // Check root element
+                    const root = xmlDoc.documentElement;
+                    if (!root || root.nodeName !== 'masil') {
+                        return {
+                            valid: false,
+                            errors: ['Root element must be <masil>']
+                        };
+                    }
+
+                    // Check required attributes
+                    const requiredAttrs = ['version', 'masil-strict'];
+                    const missingAttrs = requiredAttrs.filter(attr => !root.hasAttribute(attr));
+                    if (missingAttrs.length > 0) {
+                        return {
+                            valid: false,
+                            errors: [`Missing required attributes: ${missingAttrs.join(', ')}`]
+                        };
+                    }
+
+                    return {
+                        valid: true,
+                        errors: []
+                    };
+                } catch (error) {
+                    return {
+                        valid: false,
+                        errors: [`Validation error: ${error.message}`]
+                    };
+                }
             }
         }
 
