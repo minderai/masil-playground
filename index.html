@@ -42,14 +42,11 @@
             color: #fff;
         }
 
-        .theme-dark .box {
+        .theme-dark .block {
             background-color: #424242;
             color: #fff;
-        }
-
-        .theme-dark .table {
-            background-color: #363636;
-            color: #fff;
+            padding: 1.25rem;
+            border-radius: 6px;
         }
 
         .theme-dark .footer {
@@ -125,6 +122,14 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Add some subtle separation between blocks in light mode */
+        .block {
+            background-color: #fafafa;
+            padding: 1.25rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+        }
     </style>
 </head>
 
@@ -159,7 +164,7 @@
             <div class="columns">
                 <!-- Left column -->
                 <div class="column is-3">
-                    <div class="box">
+                    <div class="block">
                         <h3 class="title is-6">Dog Size Reference</h3>
                         <div class="content is-small">
                             <p class="mb-1">Large: [size.large]</p>
@@ -168,10 +173,10 @@
                         </div>
                     </div>
 
-                    <div class="box">
+                    <div class="block">
                         <div class="level mb-2">
                             <div class="level-item">
-                                <button id="randomBreedButton" class="button is-danger is-small">
+                                <button id="randomBreedButton" class="button is-success is-small">
                                     Random Dog Breeds
                                 </button>
                             </div>
@@ -184,7 +189,7 @@
                 <!-- Middle column - main content -->
                 <div class="column is-6">
                     <!-- Video section -->
-                    <div class="box">
+                    <div class="block">
                         <div class="video-container"
                             style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
                             <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
@@ -197,7 +202,7 @@
                     </div>
 
                     <!-- Database section -->
-                    <div class="box">
+                    <div class="block">
                         <h3 class="title is-4">Dog Database</h3>
                         <div id="tableSkeleton">
                             <div class="skeleton skeleton-table-row"></div>
@@ -227,14 +232,14 @@
                 <!-- Right column -->
                 <div class="column is-3">
                     <!-- Food list -->
-                    <div class="box">
+                    <div class="block">
                         <masil-list name="food" type="ol"></masil-list>
                     </div>
                 </div>
             </div>
 
             <!-- Help section at bottom -->
-            <div class="box mt-6">
+            <div class="block mt-6">
                 <div class="content">
                     <masil-markdown help></masil-markdown>
                 </div>
@@ -733,8 +738,8 @@
                         document.body.classList.toggle('theme-dark');
                         document.querySelector('.hero').classList.toggle('theme-dark');
 
-                        // Toggle on all boxes and tables
-                        document.querySelectorAll('.box, .table, .content, .footer').forEach(element => {
+                        // Toggle on all blocks and tables
+                        document.querySelectorAll('.block, .table, .content, .footer').forEach(element => {
                             element.classList.toggle('theme-dark');
                         });
                     });
