@@ -29,7 +29,6 @@ small: 10lbs
 
 welcome_message:
 ### Welcome to: [doc.title].
-### Dogs size is: [size.large].
 > You can interact with the database using the following commands or natural language:
 - `/report` to display `markdown_report` 
 - `/explain` to display `report` with data in tabular form
@@ -39,7 +38,7 @@ welcome_message:
 - `/random` to add 5 random records to data
 - `/history` to show a numbered list of every user prompt during this session
 - `/summary` to summarize entire chat session with list of prompts
-- `/introduction` to meet the vet and say hello
+- `/intro` to meet the vet and say hello
 - `/help` to get help on what you can ask AI to do with this data
 
 structure:
@@ -53,12 +52,15 @@ ai_role:
 - Avoid use of complex medical terminology.
 - Use analogies to explain complex concepts.
 
-introduction:
+intro:
 - AI to introduce to provide a friendly introduction to the user.
 - AI to reference `<masil-data name="vet-info">` 
+- Add this to end of introduction : "I'm a vet not an engineer."
 
 markdown_report:
 ![](https://i.aimarkdown.org/dogdatabase.png)
+
+### Dogs size is: [size.large].
 
 **[doc.company]**  
 _by: [doc.author]_
