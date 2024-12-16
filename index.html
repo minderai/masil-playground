@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@faker-js/faker/dist/faker.min.js"></script>
-    <title>[title]</title>
+    <title>[doc.title]</title>
     <style>
         /* Apply smooth transitions to all elements */
         * {
@@ -134,9 +134,9 @@
                 </button>
             </div>
             <div class="box content">
-                <h1 id="mainTitle">[title]</h1>
+                <h1 id="mainTitle">[doc.title]</h1>
                 <h3>test of styles from masil</h3>
-                <p id="welcomeText">Welcome to [title]!</p>
+                <p id="welcomeText">Welcome to [doc.title]!</p>
 
                 <!-- Dog data section -->
                 <div class="box">
@@ -230,9 +230,9 @@
                 return await response.text();
             }
 
-            async loadPlaceholders() {
+            async loadDocData() {
                 const text = await this.getRawContent();
-                const errorMessage = 'Error: incorrect placeholders. You must have exactly these tags in the file, `placeholders` and `/placeholders`';
+                const errorMessage = 'Error: You must have exactly these tags in the file, `doc` and `/doc`';
 
                 // Function to display error and stop processing
                 const showError = (message) => {
@@ -242,12 +242,21 @@
                                 <button class="delete"></button>
                                 <h4 class="title is-4">MASIL Validation Error</h4>
                                 <p style="white-space: pre-wrap;">${message}</p>
+                                <div class="content mt-4">
+                                    <p>Please check your dogs.masil file. Common issues:</p>
+                                    <ul>
+                                        <li>Each line in the &lt;doc&gt; section must have a colon (:)</li>
+                                        <li>Format should be "key: value" (with a space after the colon)</li>
+                                        <li>Example: date: 2024-01-15</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     `;
 
                     document.body.innerHTML = errorHtml;
 
+                    // Add back the delete button functionality
                     const deleteBtn = document.querySelector('.delete');
                     if (deleteBtn) {
                         deleteBtn.addEventListener('click', () => {
@@ -259,54 +268,50 @@
                     throw new Error(message);
                 };
 
-                // Check for backtick placeholders format first
-                if (!text.includes('`placeholders`') || !text.includes('`/placeholders`')) {
+                // Extract content between <doc> tags
+                const docMatch = text.match(/<doc>([\s\S]*?)<\/doc>/);
+
+                if (!docMatch) {
                     showError(errorMessage);
                     return {};
                 }
 
-                // Then check XML placeholders section
-                const placeholdersMatch = text.match(/<placeholders>([\s\S]*?)<\/placeholders>/);
+                const section = docMatch[1].trim();
 
-                if (!placeholdersMatch) {
-                    showError(errorMessage);
-                    return {};
-                }
+                try {
+                    // Process each line
+                    section.split('\n').forEach((line, index) => {
+                        line = line.trim();
+                        if (line && !line.startsWith('#')) {
+                            if (!line.includes(':')) {
+                                throw new Error(`Error in doc line ${index + 1}: "${line}"\n\nExpected format: "name: value"\nMake sure there is a colon (:) between the name and value`);
+                            }
 
-                const section = placeholdersMatch[1].trim();
+                            const [key, value] = line.split(':').map(s => s.trim());
+                            if (!key || !value) {
+                                throw new Error(`Error in doc line ${index + 1}: "${line}"\n\nBoth name and value must be provided\nFormat: "name: value"`);
+                            }
 
-                // Process each line
-                section.split('\n').forEach((line, index) => {
-                    line = line.trim();
-                    if (line && !line.startsWith('#')) {
-                        // Check for exact "name: value" format
-                        if (!line.includes(':')) {
-                            showError(`Error: missing colon in placeholder line ${index + 1}: "${line}"\nFormat must be "name: value"\n(Line numbers are counted from inside <placeholders> section)`);
-                            return {};
+                            // Validate key format (optional but recommended)
+                            if (!key.match(/^[a-zA-Z][a-zA-Z0-9_]*$/)) {
+                                throw new Error(`Error in doc line ${index + 1}: "${key}"\n\nInvalid name format. Name must:\n- Start with a letter\n- Contain only letters, numbers, and underscores`);
+                            }
+
+                            this.placeholders[`doc.${key}`] = value;
+                            console.log(`Loaded doc value: doc.${key} = ${value}`);
                         }
+                    });
 
-                        const [key, value] = line.split(':').map(s => s.trim());
-                        if (!key || !value) {
-                            showError(`Error: invalid format in placeholder line ${index + 1}: "${line}"\nFormat must be "name: value"\n(Line numbers are counted from inside <placeholders> section)`);
-                            return {};
-                        }
-
-                        if (!key.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
-                            showError(`Error: invalid name in placeholder line ${index + 1}: "${key}"\nName must start with letter or underscore\n(Line numbers are counted from inside <placeholders> section)`);
-                            return {};
-                        }
-
-                        this.placeholders[key] = value;
-                        console.log(`Loaded placeholder: ${key} = ${value}`);
+                    if (Object.keys(this.placeholders).length === 0) {
+                        throw new Error('No valid entries found in <doc> section');
                     }
-                });
 
-                if (Object.keys(this.placeholders).length === 0) {
-                    showError(errorMessage);
+                    return this.placeholders;
+
+                } catch (error) {
+                    showError(error.message);
                     return {};
                 }
-
-                return this.placeholders;
             }
 
             async getXMLDoc() {
@@ -696,7 +701,14 @@
                 try {
                     document.body.style.visibility = 'hidden';
 
-                    await this.loadPlaceholders();
+                    // Load doc data first and check for success
+                    const docData = await this.loadDocData();
+                    if (Object.keys(docData).length === 0) {
+                        // If no doc data was loaded, stop initialization
+                        document.body.style.visibility = 'visible';
+                        return;
+                    }
+
                     await this.replacePlaceholdersInDOM();
                     await this.loadConfigs();
                     await this.loadVideoConfig();
@@ -716,11 +728,29 @@
                     }
                 } catch (error) {
                     console.error('Initialization error:', error);
+                    document.body.style.visibility = 'visible';
+
+                    // Show error in a more permanent way
+                    const errorHtml = `
+                        <div class="container section">
+                            <div class="notification is-danger">
+                                <h4 class="title is-4">MASIL Initialization Error</h4>
+                                <p>There was an error initializing the application:</p>
+                                <pre>${error.message}</pre>
+                                <div class="content mt-4">
+                                    <p>Please fix the following issue in your dogs.masil file:</p>
+                                    <p>The line "date 2024-01-15" is missing a colon.</p>
+                                    <p>Change it to: "date: 2024-01-15"</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    document.body.innerHTML = errorHtml;
                 }
             }
 
             updateTitleElements() {
-                const titleValue = this.placeholders['title'];
+                const titleValue = this.placeholders['doc.title'];
                 if (titleValue) {
                     // Update main title
                     const mainTitle = document.getElementById('mainTitle');

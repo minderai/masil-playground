@@ -10,18 +10,18 @@ ai-guidance
 - Replace `placeholders` with relevant `name: value` pairs.
 
 
-# REQUIRED:You must have exactly these tags in the file, `placeholders` and `/placeholders` 
-<placeholders>
+# REQUIRED:You must have exactly these tags in the file, `doc` and `/doc` 
+<doc>
   title: Dog API Demoxx
   author: John Doexx
   version: 1.0
   date: 2024-01-15
   description: A demo of the Dog API integration
   company: Example Corp
-</placeholders>
+</doc>
 
 welcome_message:
-### Welcome to: [title].
+### Welcome to: [doc.title].
 > You can interact with the database using the following commands or natural language:
 - `/report` to display `markdown_report` 
 - `/explain` to display `report` with data in tabular form
@@ -52,8 +52,8 @@ introduction:
 markdown_report:
 ![](https://i.aimarkdown.org/dogdatabase.png)
 
-**[company]**  
-_by: [author]_
+**[doc.company]**  
+_by: [doc.author]_
 
 [data-table]
 
@@ -152,15 +152,15 @@ Charlie,5,green,Husky,12,Stubborn
         <markdown name="header">
             <![CDATA[
 ## From `markdown header`
-<img src="https://i.aimarkdown.org/dogdatabase.png" alt="[title]" class="image is-256x256">
+<img src="https://i.aimarkdown.org/dogdatabase.png" alt="[doc.title]" class="image is-256x256">
 ]]>
         </markdown>
 
         <markdown name="headexxxxr">
             <![CDATA[
-## [title] - [author]xxx
+## [doc.title] - [doc.author]xxx
 from .masil
-<img src="https://i.aimarkdown.org/dogdatabase.png" alt="[title]" class="image is-256x256">
+<img src="https://i.aimarkdown.org/dogdatabase.png" alt="[doc.title]" class="image is-256x256">
 ]]>
         </markdown>
 
@@ -185,7 +185,7 @@ from .masil
             <span id="dogCount" class="ml-4 is-size-5"></span>
         </div>
     </div>
-## [author]
+## [doc.author]
 
 > from .masil
 
