@@ -906,46 +906,41 @@
             displayStoredLists() {
                 const listsContainer = document.getElementById('storedBreedsList');
 
-                // Get both lists
-                const foodList = this.placeholders['list.food'];
-                const breedsList = this.placeholders['list.breeds'];
-
                 if (listsContainer) {
+                    // Find all list placeholders dynamically
+                    const listPlaceholders = Object.entries(this.placeholders)
+                        .filter(([key, value]) => key.startsWith('list.') && typeof value === 'object');
+
                     const listTypes = {
                         'ordered-list': (items, value) => `
                             <h3>${value}</h3>
-                            <ol>
-                                ${items.map(item => `<li>${item}</li>`).join('')}
-                            </ol>
+                            <ol>${items.map(item => `<li>${item}</li>`).join('')}</ol>
                         `,
                         'unordered-list': (items, value) => `
                             <h3>${value}</h3>
-                            <ul>
-                                ${items.map(item => `<li>${item}</li>`).join('')}
-                            </ul>
+                            <ul>${items.map(item => `<li>${item}</li>`).join('')}</ul>
                         `,
                         'tags': (items, value) => `
                             <h3>${value}</h3>
                             <div class="tags">
-                                ${items.map(item =>
-                            `<span class="tag is-primary">${item}</span>`
-                        ).join('')}
+                                ${items.map(item => `<span class="tag is-primary">${item}</span>`).join('')}
                             </div>
                         `
                     };
 
-                    // Render all available lists
+                    // Clear container
                     listsContainer.innerHTML = '';
 
-                    if (foodList) {
-                        const renderer = listTypes[foodList.type] || listTypes['unordered-list'];
-                        listsContainer.innerHTML += renderer(foodList.items, foodList.value);
-                    }
-
-                    if (breedsList) {
-                        const renderer = listTypes[breedsList.type] || listTypes['unordered-list'];
-                        listsContainer.innerHTML += `<div class="mt-4">${renderer(breedsList.items, breedsList.value)}</div>`;
-                    }
+                    // Render all found lists
+                    listPlaceholders.forEach(([key, list], index) => {
+                        const renderer = listTypes[list.type] || listTypes['unordered-list'];
+                        const divClass = index > 0 ? 'mt-4' : '';  // Add spacing between lists
+                        listsContainer.innerHTML += `
+                            <div class="${divClass}">
+                                ${renderer(list.items, list.value)}
+                            </div>
+                        `;
+                    });
                 }
             }
         }
