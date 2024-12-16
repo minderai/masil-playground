@@ -27,11 +27,19 @@ small: 10lbs
 </size>
 
 # Options for `type` are `tags`, `ordered-list`, or `unordered-list`
-<list name="breeds" type="ordered-list" value="Popular Breeds">
+<list name="breeds" type="tags" value="Popular Breeds">
+ Labrador
  German Shepherd
  Poodle
  Husky
  Bulldog
+</list>
+
+<list name="food" type="ordered-list" value="Popular Dog Foods">
+ Royal Canin
+ Purina Pro Plan
+ Hill's Science Diet
+ Blue Buffalo
 </list>
 
 
