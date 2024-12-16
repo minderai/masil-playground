@@ -1133,7 +1133,24 @@
             const tabContents = document.querySelectorAll('.tab-content');
             const chatText = document.getElementById('chat-text');
             const markdownOutput = document.getElementById('markdown-output');
-            const converter = new showdown.Converter();
+            const converter = new showdown.Converter({
+                simplifiedAutoLink: true,      // Automatically convert URLs to links
+                tables: true,                  // Enable tables
+                tasklists: true,              // Enable GitHub-style task lists
+                strikethrough: true,          // Enable ~~strikethrough~~
+                ghCodeBlocks: true,           // Enable GitHub-style code blocks
+                emoji: true,                  // Enable emoji support :smile:
+                openLinksInNewWindow: true,   // Open links in new tab
+                parseImgDimensions: true,     // Parse image dimensions from markdown
+                simpleLineBreaks: true,       // Convert line breaks to <br>
+                ghMentions: true,             // Enable @mentions
+                ghCompatibleHeaderId: true,   // Generate GitHub-compatible header IDs
+                backslashEscapesHTMLTags: true // Allow escaping HTML tags with backslash
+            });
+
+            // Set some additional options
+            showdown.setOption('requireSpaceBeforeHeadingText', true);
+            showdown.setOption('literalMidWordUnderscores', true);
 
             // Handle tab switching
             tabs.forEach(tab => {
