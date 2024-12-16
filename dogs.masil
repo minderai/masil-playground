@@ -56,7 +56,7 @@
     _by: [doc.author]_
 
     [data-table]
-                                                                    <!-- END - AI comments section -->
+                                                                        <!-- END - AI comments section -->
     <masil>
         <masil-data name="dogs">
             <![CDATA[
@@ -123,6 +123,14 @@ Charlie,5,green,Husky,12,Stubborn
                 2. Use commands like /random, /validate, or /help in ChatGPT
                 3. Copy any new data back into the .minder file
                 4. Refresh this page to see the updated visualization
+                ]]>
+            </markdown>
+
+            <markdown name="dev-help">
+                <![CDATA[
+                MASIL (Markdown AI Structured Integration Language) works with HTML through web components.
+                The .masil file contains structured data and markdown that gets rendered into HTML.
+                Components like masil-markdown and masil-list handle the conversion automatically.
                 ]]>
             </markdown>
 
