@@ -1,114 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <masil xmlns="http://masil.org/schema/v1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://masil.org/schema/v1 masil.xsd" version="1.0" masil-strict="true">
-    <!-- 
-# AI to follow these instructions: 
-ai-guidance
-- Immediately on startup, display `welcome_message:`and  without elaboration 
-- AI to completely ignore anything in `<masil-web>` section.
-- AI to append on a separate line "Enter `/help` to see what AI can do ." to all responses.
-- Render markdown content as-is unless otherwise instructed.
-- Replace `placeholders` with relevant `name: value` pairs, like doc.title: "Dog API Demoxx"
+    <!-- AI comments section -->
+    <doc>
+        title: Dog API Demoxx
+        author: John Doexx
+        version: 1.0
+        date: 2024-01-15
+        description: A demo of the Dog API integration
+        company: Example Corp
+    </doc>
 
+    <size>
+        large: 50 lbs
+        medium: 25lb`
+        small: 10lbs
+    </size>
 
-# REQUIRED:You must have exactly these tags in the file, `doc` and `/doc` 
-<doc>
-title: Dog API Demoxx
-author: John Doexx
-version: 1.0
-date: 2024-01-15
-description: A demo of the Dog API integration
-company: Example Corp
-</doc>
+    <!-- Rest of AI section -->
+    welcome_message:
+    ### Welcome to: [doc.title].
+    > You can interact with the database using the following commands or natural language:
+    - `/report` to display `markdown_report` 
+    - `/explain` to display `report` with data in tabular form
+    - `/update` to show CSV data with any changes AI made to data
+    - `/validate` to validate data for accuracy
+    - `/fix` correct the data based on validation by AI
+    - `/random` to add 5 random records to data
+    - `/history` to show a numbered list of every user prompt during this session
+    - `/summary` to summarize entire chat session with list of prompts
+    - `/intro` to meet the vet and say hello
+    - `/help` to get help on what you can ask AI to do with this data
 
-<size>
-large: 50 lbs
-medium: 25lb`
-small: 10lbs
-</size>
+    structure:
+    - AI: Processes logic, commands, and markdown rendering.
+    - Web: Handles UI rendering in `    <masil-web>` components. (AI to ig)
+    - Data: Stores and manages shared data in `<masil-data>`.
 
-# Options for `type` are `tags`, `ordered-list`, or `unordered-list`
-<list name="breeds" type="tags" value="Popular Breeds">
- Labrador
- German Shepherd
- Poodle
- Husky
- Bulldog
-</list>
+    # role for AI
+    ai_role:
+    - A veterinarian, friendly, kind, reassuring and patient.
+    - Avoid use of complex medical terminology.
+    - Use analogies to explain complex concepts.
 
-# Options for `type` are `tags`, `ordered-list`, or `unordered-list`
-<list name="food" type="ordered-list" value="Popular Dog Foods">
- Royal Canin
- Purina Pro Plan
- Hill's Science Diet
- Blue Buffalo
-</list>
+    intro:
+    - AI to introduce to provide a friendly introduction to the user.
+    - AI to reference `<masil-data name="vet-info">` 
+    - Add this to end of introduction : "I'm a vet not an engineer."
 
+    markdown_report:
+    ![](https://i.aimarkdown.org/dogdatabase.png)
 
-welcome_message:
-### Welcome to: [doc.title].
-> You can interact with the database using the following commands or natural language:
-- `/report` to display `markdown_report` 
-- `/explain` to display `report` with data in tabular form
-- `/update` to show CSV data with any changes AI made to data
-- `/validate` to validate data for accuracy
-- `/fix` correct the data based on validation by AI
-- `/random` to add 5 random records to data
-- `/history` to show a numbered list of every user prompt during this session
-- `/summary` to summarize entire chat session with list of prompts
-- `/intro` to meet the vet and say hello
-- `/help` to get help on what you can ask AI to do with this data
+    ### Dogs size is: [size.large].
 
-structure:
-- AI: Processes logic, commands, and markdown rendering.
-- Web: Handles UI rendering in `<masil-web>` components. (AI to ig)
-- Data: Stores and manages shared data in `<masil-data>`.
+    **[doc.company]**  
+    _by: [doc.author]_
 
-# role for AI
-ai_role:
-- A veterinarian, friendly, kind, reassuring and patient.
-- Avoid use of complex medical terminology.
-- Use analogies to explain complex concepts.
+    [data-table]
 
-intro:
-- AI to introduce to provide a friendly introduction to the user.
-- AI to reference `<masil-data name="vet-info">` 
-- Add this to end of introduction : "I'm a vet not an engineer."
-
-markdown_report:
-![](https://i.aimarkdown.org/dogdatabase.png)
-
-### Dogs size is: [size.large].
-
-**[doc.company]**  
-_by: [doc.author]_
-
-[data-table]
-
--->
-
-    <masil-configuration>
-        <show_developer_help>true</show_developer_help>
-        <show_user_help>true</show_user_help>
-    </masil-configuration>
-    <!-- AI Component processed by AI only -->
-
-    <masil-ai>
-        <masil-data name="vet-info">
-            <veterinarian>
-                <personal>
-                    <name>Dr. James T. Kirk</name>
-                    <nickname>Jamie</nickname>
-                    <age>55</age>
-                </personal>
-                <contact>
-                    <phone>807-555-1212</phone>
-                </contact>
-            </veterinarian>
-        </masil-data>
-    </masil-ai>
-
-    <masil-data name="dogs">
-        <![CDATA[
+        <masil-data name="dogs">
+            <![CDATA[
 Name,Age,Color,Breed,Lifespan,Temperament
 Gracie,31,beige,Jack Russell,55,Energetic
 Butch,9,beige,Mixed,10,Energetic
@@ -116,122 +67,56 @@ Max,13,black,German Shepherd,11,Confident
 Bella,9,white,Poodle,12,Smart
 Charlie,5,green,Husky,12,Stubborn
 ]]>
-    </masil-data>
-
-    <!-- HTML Components processed by web browser only, AI to ignore -->
-    <masil-web>
-
-
-
-        <!-- API configuration for dog generation -->
-        <masil-data name="dog-api" type="json">
-            <![CDATA[
-{
-"type": "faker",
-"description": "Using Faker.js to generate random breeds",
-"module": "faker.animal.dog()",
-"method": "JavaScript",
-"params": {
-    "count": 5,
-    "buttonText": "Generate Random Breeds",
-    "buttonClass": "is-primary"
-}
-}
-]]>
         </masil-data>
 
-        <!-- UI configuration for charts and display -->
-        <masil-data name="ui-config" type="json">
+        <masil-data name="breeds" format="list" type="tags">
             <![CDATA[
-{
-    "display": {
-        "chart": {
-            "type": "line",
-            "labels": {
-                "xAxis": "Doxxg Names",
-                "yAxis": "Years"
-            }
-        }
-    }
-}
-]]>
+        title: Popular Breeds
+        items:
+          - Labrador
+          - German Shepherd
+          - Poodle
+          - Husky
+          - Bulldog
+        ]]>
         </masil-data>
 
-        <!-- Video configuration
-        You can replace videoId with "nQlqJ9_EzQU" from any YouTube URL like:
-        Just copy the ID part between /watch?v= or /youtu.be/ and the next ? or &
-        -->
-
-        <masil-data name="video-config" type="json">
+        <masil-data name="food" format="list" type="ol">
             <![CDATA[
-{
-    "youtube": {
-        "videoId": "mbcpEcGv_WQ",
-        "controls": "0",
-        "title": "Dog Training Basics",
-        "autoplay": false,
-        "showControls": false
-    }
-}
-]]>
+        title: Popular Dog Foods
+        items:
+          - Royal Canin
+          - Purina Pro Plan
+          - Hill's Science Diet
+          - Blue Buffalo
+        ]]>
         </masil-data>
 
-        <markdown name="header">
-            <![CDATA[
-## From `markdown header`
-<img src="https://i.aimarkdown.org/dogdatabase.png" alt="[doc.title]" class="image is-256x256">
-]]>
-        </markdown>
+        <masil-web>
+            <!-- Web components -->
+            <markdown name="header">
+                <![CDATA[
+                ## From markdown header
+                [doc.title]
+                ]]>
+            </markdown>
 
-        <markdown name="headexxxxr">
-            <![CDATA[
-## [doc.title] - [doc.author]xxx
-from .masil
-<img src="https://i.aimarkdown.org/dogdatabase.png" alt="[doc.title]" class="image is-256x256">
-]]>
-        </markdown>
+            <markdown name="footer">
+                <![CDATA[
+                ### Footer Component from MASIL xxx
+                <strong>Strong!</strong>
+                ]]>
+            </markdown>
 
-        <markdown name="help-for-users">
-            <![CDATA[
-# Heading 2
-1. Copy the entire .minder file and paste it into ChatGPT
-2. Use commands like /random, /validate, or /help in ChatGPT
-3. Copy any new data back into the .minder file
-4. Refresh this page to see the updated visualization
-]]>
-        </markdown>
-
-        <markdown name="footer">
-            <![CDATA[
-<strong>Strong!</strong>
-<div class="level mb-4">
-<div class="level-left">
-    <button id="countDogsButton" class="button is-primary">
-        Count Dogs
-            </button>
-            <span id="dogCount" class="ml-4 is-size-5"></span>
-        </div>
-    </div>
-## [doc.author]
-
-> from .masil
-
----
-]]>
-        </markdown>
-
-# Example of how to use styles and scripts in .masil file
-        <style name="styles">
-            <![CDATA[
-h3 {
-    color: blue;
-    font-size: 2em;
-    text-align: center;
-    margin: 1em 0;
-}
-]]>
-        </style>
-
-    </masil-web>
-
-</masil>
+            <markdown name="help">
+                <![CDATA[
+                ## Help for users
+                ### Heading 2
+                1. Copy the entire .minder file and paste it into ChatGPT
+                2. Use commands like /random, /validate, or /help in ChatGPT
+                3. Copy any new data back into the .minder file
+                4. Refresh this page to see the updated visualization
+                ]]>
+            </markdown>
+        </masil-web>
+    </masil>

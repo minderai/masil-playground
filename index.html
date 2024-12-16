@@ -151,13 +151,20 @@
                     </div>
                 </div>
 
-                <!-- Add new box for permanent breed list -->
+                <!-- Markdown Content -->
                 <div class="box">
-                    <div class="content" id="storedBreedsList">
-                        <!-- Will be populated by JavaScript -->
-                    </div>
+                    <masil-markdown header></masil-markdown>
                 </div>
 
+                <!-- MASIL Lists -->
+                <div class="box">
+                    <masil-list name="breeds" type="tags"></masil-list>
+                </div>
+                <div class="box">
+                    <masil-list name="food" type="ol"></masil-list>
+                </div>
+
+                <!-- Database section -->
                 <div class="box">
                     <h3 class="title is-4">Dog Database</h3>
                     <!-- Skeleton loader for table -->
@@ -188,30 +195,18 @@
                     </div>
                 </div>
 
-                <!-- Markdown section -->
+                <!-- Footer -->
                 <div class="box">
-                    <h3 class="title is-4">Markdown Content</h3>
-                    <masil-markdown header></masil-markdown>
+                    <masil-markdown footer></masil-markdown>
+                </div>
+
+                <!-- Help Section -->
+                <div class="box">
+                    <masil-markdown help></masil-markdown>
                 </div>
             </div>
     </div>
     </section>
-
-    <!-- Add footer with imported AI component -->
-    <div class="container box content">
-        <footer class="footer">
-            <div class="content">
-                <h3>Footer Component</h3>
-                <masil-markdown footer></masil-markdown>
-            </div>
-        </footer>
-    </div>
-
-    <!-- Add help section at bottom -->
-    <div class="container content box">
-        <h2>Help for users</h2>
-        <masil-markdown help-for-users></masil-markdown>
-    </div>
 
     <script>
         // At the top level, before any class definitions
@@ -290,18 +285,21 @@
                     }
 
                     // Then handle list tags
-                    const listMatches = text.matchAll(/<list name="([^"]+)" type="([^"]+)" value="([^"]+)">([\s\S]*?)<\/list>/g);
+                    const listMatches = text.matchAll(/<masil-data name="([^"]+)" format="list" type="([^"]+)">\s*<!\[CDATA\[([\s\S]*?)\]\]>/g);
                     for (const match of listMatches) {
-                        const [_, name, type, value, items] = match;
-                        const listItems = items.split('\n')
-                            .map(line => line.trim())
-                            .filter(line => line.length > 0)
-                            .filter(line => !line.match(/^[<\s]/));
+                        const [_, name, type, content] = match;
+
+                        // Parse YAML-like content
+                        const lines = content.split('\n').map(line => line.trim());
+                        const title = lines.find(line => line.startsWith('title:'))?.split(':')[1].trim();
+                        const items = lines
+                            .filter(line => line.startsWith('- '))
+                            .map(line => line.slice(2).trim());
 
                         this.placeholders[`list.${name}`] = {
                             type,
-                            value,
-                            items: listItems
+                            value: title,
+                            items: items
                         };
                     }
 
@@ -797,9 +795,6 @@
                     this.setupTheme();
                     this.updateTitleElements();
 
-                    // Add this new line to display breeds list
-                    this.displayStoredLists();
-
                     this.initialized = true;
 
                     document.body.style.visibility = 'visible';
@@ -901,57 +896,13 @@
                     }
                 }
             }
-
-            // Rename method to be more generic
-            displayStoredLists() {
-                const listsContainer = document.getElementById('storedBreedsList');
-
-                if (listsContainer) {
-                    // Find all list placeholders dynamically
-                    const listPlaceholders = Object.entries(this.placeholders)
-                        .filter(([key, value]) => key.startsWith('list.') && typeof value === 'object');
-
-                    const listTypes = {
-                        'ordered-list': (items, value) => `
-                            <h3>${value}</h3>
-                            <ol>${items.map(item => `<li>${item}</li>`).join('')}</ol>
-                        `,
-                        'unordered-list': (items, value) => `
-                            <h3>${value}</h3>
-                            <ul>${items.map(item => `<li>${item}</li>`).join('')}</ul>
-                        `,
-                        'tags': (items, value) => `
-                            <h3>${value}</h3>
-                            <div class="tags">
-                                ${items.map(item => `<span class="tag is-primary">${item}</span>`).join('')}
-                            </div>
-                        `
-                    };
-
-                    // Clear container
-                    listsContainer.innerHTML = '';
-
-                    // Render all found lists
-                    listPlaceholders.forEach(([key, list], index) => {
-                        const renderer = listTypes[list.type] || listTypes['unordered-list'];
-                        const divClass = index > 0 ? 'mt-4' : '';  // Add spacing between lists
-                        listsContainer.innerHTML += `
-                            <div class="${divClass}">
-                                ${renderer(list.items, list.value)}
-                            </div>
-                        `;
-                    });
-                }
-            }
         }
 
         // Define the markdown component
         class MasilMarkdown extends HTMLElement {
             async connectedCallback() {
                 try {
-                    // Wait for dogManager to be ready
                     await dogManagerReady;
-
                     if (!dogManager?.placeholders) {
                         console.warn('Placeholders not loaded yet');
                         return;
@@ -966,7 +917,58 @@
                         const markdown = masilWeb.querySelector(`markdown[name="${name}"]`);
                         if (markdown) {
                             let content = markdown.textContent.trim();
-                            const converter = new showdown.Converter();
+                            // Strip leading whitespace from each line
+                            content = content.split('\n')
+                                .map(line => line.trimStart())
+                                .join('\n');
+
+                            const converter = new showdown.Converter({
+                                simplifiedAutoLink: true,
+                                tables: true,
+                                tasklists: true,
+                                simpleLineBreaks: true,
+                                ghCodeBlocks: true,
+                                parseImgDimensions: true,
+                                strikethrough: true,
+                                ghMentions: true,
+                                openLinksInNewWindow: true,
+                                emoji: true,
+                                underline: true,
+                                completeHTMLDocument: false,
+                                metadata: false,
+                                splitAdjacentBlockquotes: true,
+                                backslashEscapesHTMLTags: true,
+                                requireSpaceBeforeHeadingText: true,
+                                ghMentionsLink: 'https://github.com/{u}',
+                                ghCompatibleHeaderId: true,
+                                encodeEmails: true,
+                                rawHeaderId: true,
+                                rawPrefixHeaderId: true,
+                                headerLevelStart: 1,
+                                disableForced4SpacesIndentedSublists: true,
+                                simpleLineBreaks: true,
+                                smoothLivePreview: true,
+                                smartIndentationFix: true,
+                                literalMidWordUnderscores: true,
+                                literalMidWordAsterisks: true,
+                                customizedHeaderId: true,
+                                noHeaderId: false,
+                                ghCompatibleHeaderId: true,
+                                parseImgDimensions: true,
+                                simplifiedAutoLink: true,
+                                excludeTrailingPunctuationFromURLs: true,
+                                strikethrough: true,
+                                tables: true,
+                                tasklists: true,
+                                ghCodeBlocks: true,
+                                ghMentions: true,
+                                openLinksInNewWindow: true,
+                                emoji: true,
+                                underline: true,
+                                completeHTMLDocument: false,
+                                metadata: false,
+                                splitAdjacentBlockquotes: true
+                            });
                             this.innerHTML = converter.makeHtml(content);
                         }
                     }
@@ -998,6 +1000,63 @@
                 console.error('Error during initialization:', error);
             }
         });
+
+        // After the MasilMarkdown component definition
+        class MasilList extends HTMLElement {
+            async connectedCallback() {
+                try {
+                    await dogManagerReady;
+                    const name = this.getAttribute('name');
+                    if (!name) {
+                        console.warn('MasilList: name attribute is required');
+                        return;
+                    }
+
+                    const data = dogManager.placeholders[`list.${name}`];
+                    if (!data) {
+                        console.warn(`MasilList: no data found for list "${name}"`);
+                        return;
+                    }
+
+                    const listTypes = {
+                        'ol': (items, value) => `
+                            <div class="content">
+                                <h3>${value}</h3>
+                                <ol>${items.map(item => `<li>${item}</li>`).join('')}</ol>
+                            </div>
+                        `,
+                        'ul': (items, value) => `
+                            <div class="content">
+                                <h3>${value}</h3>
+                                <ul>${items.map(item => `<li>${item}</li>`).join('')}</ul>
+                            </div>
+                        `,
+                        'tags': (items, value) => `
+                            <div class="content">
+                                <h3>${value}</h3>
+                                <div class="tags">
+                                    ${items.map(item => `<span class="tag is-primary">${item}</span>`).join('')}
+                                </div>
+                            </div>
+                        `
+                    };
+
+                    const type = this.getAttribute('type') || 'ul';
+                    const renderer = listTypes[type] || listTypes['ul'];
+                    this.innerHTML = renderer(data.items, data.value);
+
+                } catch (error) {
+                    console.error('Error in MasilList:', error);
+                    this.innerHTML = `
+                        <div class="notification is-danger">
+                            Error loading list: ${error.message}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        customElements.define('masil-list', MasilList);
     </script>
 </body>
 
