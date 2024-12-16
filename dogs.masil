@@ -92,6 +92,10 @@ Charlie,5,green,Husky,12,Stubborn
         ]]>
         </masil-data>
 
+        <masil-ai>
+            <!-- AI-specific configuration -->
+        </masil-ai>
+
         <masil-web>
             <!-- Web components -->
             <markdown name="header">
@@ -118,5 +122,46 @@ Charlie,5,green,Husky,12,Stubborn
                 4. Refresh this page to see the updated visualization
                 ]]>
             </markdown>
+
+            <!-- API Configuration -->
+            <masil-data name="api-config" type="json">
+                <![CDATA[
+                {
+                    "module": "faker.animal.dog",
+                    "params": {
+                        "count": 5,
+                        "buttonText": "Generate Random Dogs",
+                        "buttonClass": "is-primary is-medium"
+                    }
+                }
+                ]]>
+            </masil-data>
+
+            <!-- Chart Configuration -->
+            <masil-data name="ui-config" type="json">
+                <![CDATA[
+                {
+                    "display": {
+                        "table": {
+                            "sortable": true,
+                            "striped": true,
+                            "hoverable": true,
+                            "columns": ["Name", "Age", "Color", "Breed", "Lifespan", "Temperament"]
+                        },
+                        "chart": {
+                            "type": "line",
+                            "colors": {
+                                "age": "rgba(54, 162, 235, 0.5)",
+                                "lifespan": "rgba(255, 99, 132, 0.5)"
+                            },
+                            "labels": {
+                                "xAxis": "Dog Names",
+                                "yAxis": "Years"
+                            }
+                        }
+                    }
+                }
+                ]]>
+            </masil-data>
         </masil-web>
     </masil>
