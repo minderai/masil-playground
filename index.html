@@ -271,38 +271,41 @@
                 const xmlDoc = await this.getXMLDoc();
 
                 try {
-                    // Use proper DOM traversal instead of regex
                     const sections = xmlDoc.querySelectorAll('masil > *');
 
-                    for (const section of sections) {
-                        const nodeName = section.nodeName.toLowerCase();
+                    // Process masil-data sections first (no async needed)
+                    sections.forEach(section => {
+                        if (section.nodeName.toLowerCase() === 'masil-data') {
+                            const name = section.getAttribute('name');
+                            const format = section.getAttribute('format');
+                            const type = section.getAttribute('type');
 
-                        switch (nodeName) {
-                            case 'masil-data':
-                                await this.loadDataSection(section);
-                                break;
-                            case 'masil-web':
-                                await this.loadWebSection(section);
-                                break;
-                            case 'masil-ai':
-                                // Future AI processing
-                                break;
-                            case 'doc':
-                            case 'size':
-                                await this.loadConfigSection(section);
-                                break;
+                            if (!name) return;
+
+                            // Get CDATA content (we trust it's there due to schema)
+                            const content = section.textContent.trim();
+
+                            if (format === 'list') {
+                                this.processListData(name, type, content);
+                            } else if (type === 'json') {
+                                this.processJsonData(name, content);
+                            } else {
+                                this.processRawData(name, content);
+                            }
                         }
-                    }
+                    });
 
-                    // Validate placeholders
-                    if (Object.keys(this.placeholders).length === 0) {
-                        throw new Error('No valid sections found in the file');
-                    }
+                    // Then process configuration sections
+                    sections.forEach(section => {
+                        const nodeName = section.nodeName.toLowerCase();
+                        if (nodeName === 'doc' || nodeName === 'size') {
+                            this.loadConfigSection(section);
+                        }
+                    });
 
                     return this.placeholders;
-
                 } catch (error) {
-                    console.error('Error in DOM traversal:', error);
+                    console.error('Error processing sections:', error);
                     throw error;
                 }
             }
