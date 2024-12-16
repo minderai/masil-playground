@@ -694,12 +694,12 @@
                 if (this.initialized) return;
 
                 try {
-                    // Hide the main content until everything is loaded
                     document.body.style.visibility = 'hidden';
 
                     await this.loadPlaceholders();
                     await this.replacePlaceholdersInDOM();
                     await this.loadConfigs();
+                    await this.loadVideoConfig();
                     await this.populateTable();
                     await this.applyMasilStyles();
                     this.setupRandomBreeds();
@@ -708,7 +708,6 @@
 
                     this.initialized = true;
 
-                    // Show the content and remove the loading overlay
                     document.body.style.visibility = 'visible';
                     const overlay = document.getElementById('pageLoadingOverlay');
                     if (overlay) {
@@ -764,6 +763,29 @@
                 }
 
                 return dogBreeds;
+            }
+
+            async loadVideoConfig() {
+                const xmlDoc = await this.getXMLDoc();
+                const videoConfigData = xmlDoc.querySelector('masil-data[name="video-config"]');
+
+                if (videoConfigData) {
+                    try {
+                        const videoConfig = JSON.parse(videoConfigData.textContent.trim());
+                        const iframe = document.querySelector('.video-container iframe');
+
+                        if (iframe && videoConfig.youtube) {
+                            const { videoId, controls, autoplay, showControls } = videoConfig.youtube;
+                            const controlsParam = showControls ? '1' : '0';
+                            const autoplayParam = autoplay ? '1' : '0';
+
+                            iframe.src = `https://www.youtube.com/embed/${videoId}?si=ejJV4KxhwZHUWhIO&controls=${controlsParam}&autoplay=${autoplayParam}`;
+                            iframe.title = videoConfig.youtube.title || 'YouTube video player';
+                        }
+                    } catch (error) {
+                        console.error('Error parsing video config:', error);
+                    }
+                }
             }
         }
 

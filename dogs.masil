@@ -59,29 +59,29 @@ _by: [author]_
 
 -->
 
-<masil-configuration>
-    <show_developer_help>true</show_developer_help>
-    <show_user_help>true</show_user_help>
-</masil-configuration>
-<!-- AI Component processed by AI only -->
+    <masil-configuration>
+        <show_developer_help>true</show_developer_help>
+        <show_user_help>true</show_user_help>
+    </masil-configuration>
+    <!-- AI Component processed by AI only -->
 
-<masil-ai>
-    <masil-data name="vet-info">
-        <veterinarian>
-            <personal>
-                <name>Dr. James T. Kirk</name>
-                <nickname>Jamie</nickname>
-                <age>55</age>
-            </personal>
-            <contact>
-                <phone>807-555-1212</phone>
-            </contact>
-        </veterinarian>
-    </masil-data>
-</masil-ai>
+    <masil-ai>
+        <masil-data name="vet-info">
+            <veterinarian>
+                <personal>
+                    <name>Dr. James T. Kirk</name>
+                    <nickname>Jamie</nickname>
+                    <age>55</age>
+                </personal>
+                <contact>
+                    <phone>807-555-1212</phone>
+                </contact>
+            </veterinarian>
+        </masil-data>
+    </masil-ai>
 
-<masil-data name="dogs">
-<![CDATA[
+    <masil-data name="dogs">
+        <![CDATA[
 Name,Age,Color,Breed,Lifespan,Temperament
 Gracie,31,beige,Jack Russell,55,Energetic
 Butch,9,beige,Mixed,10,Energetic
@@ -89,14 +89,16 @@ Max,13,black,German Shepherd,11,Confident
 Bella,9,white,Poodle,12,Smart
 Charlie,5,green,Husky,12,Stubborn
 ]]>
-</masil-data>
+    </masil-data>
 
-<!-- HTML Components processed by web browser only, AI to ignore -->
-<masil-web>
+    <!-- HTML Components processed by web browser only, AI to ignore -->
+    <masil-web>
 
-<!-- API configuration for dog generation -->
-<masil-data name="dog-api" type="json">
-    <![CDATA[
+
+
+        <!-- API configuration for dog generation -->
+        <masil-data name="dog-api" type="json">
+            <![CDATA[
 {
 "type": "faker",
 "description": "Using Faker.js to generate random breeds",
@@ -109,11 +111,11 @@ Charlie,5,green,Husky,12,Stubborn
 }
 }
 ]]>
-</masil-data>
+        </masil-data>
 
-<!-- UI configuration for charts and display -->
-<masil-data name="ui-config" type="json">
-<![CDATA[
+        <!-- UI configuration for charts and display -->
+        <masil-data name="ui-config" type="json">
+            <![CDATA[
 {
 "display": {
 "chart": {
@@ -124,37 +126,51 @@ Charlie,5,green,Husky,12,Stubborn
     }
 }
 }
+]]>
+        </masil-data>
+
+        <!-- Video configuration -->
+        <masil-data name="video-config" type="json">
+            <![CDATA[
+{
+    "youtube": {
+        "videoId": "mbcpEcGv_WQx",
+        "controls": "0",
+        "title": "Dog Training Basics",
+        "autoplay": false,
+        "showControls": false
+    }
 }
 ]]>
-</masil-data>
+        </masil-data>
 
-<markdown name="header">
-<![CDATA[
+        <markdown name="header">
+            <![CDATA[
 ## From `markdown header`
 <img src="https://i.aimarkdown.org/dogdatabase.png" alt="[title]" class="image is-256x256">
 ]]>
-</markdown>
+        </markdown>
 
-<markdown name="headexxxxr">
-<![CDATA[
+        <markdown name="headexxxxr">
+            <![CDATA[
 ## [title] - [author]xxx
 from .masil
 <img src="https://i.aimarkdown.org/dogdatabase.png" alt="[title]" class="image is-256x256">
 ]]>
-</markdown>
+        </markdown>
 
-<markdown name="help-for-users">
-<![CDATA[
+        <markdown name="help-for-users">
+            <![CDATA[
 # Heading 2
 1. Copy the entire .minder file and paste it into ChatGPT
 2. Use commands like /random, /validate, or /help in ChatGPT
 3. Copy any new data back into the .minder file
 4. Refresh this page to see the updated visualization
 ]]>
-</markdown>
+        </markdown>
 
-<markdown name="footer">
-<![CDATA[
+        <markdown name="footer">
+            <![CDATA[
 <strong>Strong!</strong>
 <div class="level mb-4">
 <div class="level-left">
@@ -170,11 +186,11 @@ from .masil
 
 ---
 ]]>
-</markdown>
+        </markdown>
 
 # Example of how to use styles and scripts in .masil file
-<style name="styles">
-<![CDATA[
+        <style name="styles">
+            <![CDATA[
 h3 {
     color: blue;
     font-size: 2em;
@@ -182,7 +198,8 @@ h3 {
     margin: 1em 0;
 }
 ]]>
-</style>
-</masil-web>
+        </style>
+
+    </masil-web>
 
 </masil>
