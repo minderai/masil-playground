@@ -107,7 +107,7 @@
         <div class="loading-spinner"></div>
     </div>
     <div class="container content">
-        <h1>Dog size: [tags.large]</h1>
+        <h1>Dog size: [size.large]</h1>
         <!-- Add responsive video container -->
         <div class="box">
             <div class="columns is-centered">
@@ -222,97 +222,113 @@
                 this.sortDirection = 'asc';
                 this.apiConfig = null;
                 this.uiConfig = null;
-                this.placeholders = {};
+                this.placeholders = {
+                    doc: {},
+                    size: {},
+                    tags: {}  // Add more types as needed
+                };
                 this.initialized = false;
             }
 
-            async getRawContent() {
-                const response = await fetch('dogs.masil');
-                return await response.text();
-            }
-
-            async loadDocData() {
-                const text = await this.getRawContent();
-                const errorMessage = 'Error: You must have exactly these tags in the file, `doc` and `/doc`';
-
-                // Function to display error and stop processing
-                const showError = (message) => {
-                    const errorHtml = `
-                        <div class="container section">
-                            <div class="notification is-danger">
-                                <button class="delete"></button>
-                                <h4 class="title is-4">MASIL Validation Error</h4>
-                                <p style="white-space: pre-wrap;">${message}</p>
-                                <div class="content mt-4">
-                                    <p>Please check your dogs.masil file. Common issues:</p>
-                                    <ul>
-                                        <li>Each line in the &lt;doc&gt; section must have a colon (:)</li>
-                                        <li>Format should be "key: value" (with a space after the colon)</li>
-                                        <li>Example: date: 2024-01-15</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    document.body.innerHTML = errorHtml;
-
-                    // Add back the delete button functionality
-                    const deleteBtn = document.querySelector('.delete');
-                    if (deleteBtn) {
-                        deleteBtn.addEventListener('click', () => {
-                            deleteBtn.closest('.notification').remove();
-                        });
-                    }
-
-                    console.error(message);
-                    throw new Error(message);
-                };
-
-                // Extract content between <doc> tags
-                const docMatch = text.match(/<doc>([\s\S]*?)<\/doc>/);
-
-                if (!docMatch) {
-                    showError(errorMessage);
-                    return {};
+            // Helper method to load a section's data
+            async loadSection(sectionName, text) {
+                const sectionMatch = text.match(new RegExp(`<${sectionName}>([\\\s\\\S]*?)<\/${sectionName}>`));
+                if (!sectionMatch) {
+                    return null;
                 }
 
-                const section = docMatch[1].trim();
+                const section = sectionMatch[1].trim();
+                const sectionData = {};
+
+                section.split('\n').forEach((line, index) => {
+                    line = line.trim();
+                    if (line && !line.startsWith('#')) {
+                        if (!line.includes(':')) {
+                            throw new Error(`Error in ${sectionName} line ${index + 1}: "${line}"\n\nExpected format: "name: value"\nMake sure there is a colon (:) between the name and value`);
+                        }
+
+                        const [key, value] = line.split(':').map(s => s.trim());
+                        if (!key || !value) {
+                            throw new Error(`Error in ${sectionName} line ${index + 1}: "${line}"\n\nBoth name and value must be provided\nFormat: "name: value"`);
+                        }
+
+                        // Validate key format
+                        if (!key.match(/^[a-zA-Z][a-zA-Z0-9_]*$/)) {
+                            throw new Error(`Error in ${sectionName} line ${index + 1}: "${key}"\n\nInvalid name format. Name must:\n- Start with a letter\n- Contain only letters, numbers, and underscores`);
+                        }
+
+                        sectionData[key] = value;
+                        console.log(`Loaded ${sectionName} value: ${sectionName}.${key} = ${value}`);
+                    }
+                });
+
+                return sectionData;
+            }
+
+            async loadAllSections() {
+                const text = await this.getRawContent();
 
                 try {
-                    // Process each line
-                    section.split('\n').forEach((line, index) => {
-                        line = line.trim();
-                        if (line && !line.startsWith('#')) {
-                            if (!line.includes(':')) {
-                                throw new Error(`Error in doc line ${index + 1}: "${line}"\n\nExpected format: "name: value"\nMake sure there is a colon (:) between the name and value`);
-                            }
+                    // Load each section
+                    for (const sectionName of Object.keys(this.placeholders)) {
+                        const sectionData = await this.loadSection(sectionName, text);
+                        if (sectionData) {
+                            this.placeholders[sectionName] = sectionData;
 
-                            const [key, value] = line.split(':').map(s => s.trim());
-                            if (!key || !value) {
-                                throw new Error(`Error in doc line ${index + 1}: "${line}"\n\nBoth name and value must be provided\nFormat: "name: value"`);
-                            }
-
-                            // Validate key format (optional but recommended)
-                            if (!key.match(/^[a-zA-Z][a-zA-Z0-9_]*$/)) {
-                                throw new Error(`Error in doc line ${index + 1}: "${key}"\n\nInvalid name format. Name must:\n- Start with a letter\n- Contain only letters, numbers, and underscores`);
-                            }
-
-                            this.placeholders[`doc.${key}`] = value;
-                            console.log(`Loaded doc value: doc.${key} = ${value}`);
+                            // Create prefixed placeholders for compatibility
+                            Object.entries(sectionData).forEach(([key, value]) => {
+                                this.placeholders[`${sectionName}.${key}`] = value;
+                            });
                         }
-                    });
+                    }
 
-                    if (Object.keys(this.placeholders).length === 0) {
-                        throw new Error('No valid entries found in <doc> section');
+                    if (Object.values(this.placeholders).every(section => Object.keys(section).length === 0)) {
+                        throw new Error('No valid sections found in the file');
                     }
 
                     return this.placeholders;
 
                 } catch (error) {
-                    showError(error.message);
+                    this.showError(error.message);
                     return {};
                 }
+            }
+
+            showError(message) {
+                const errorHtml = `
+                    <div class="container section">
+                        <div class="notification is-danger">
+                            <button class="delete"></button>
+                            <h4 class="title is-4">MASIL Validation Error</h4>
+                            <p style="white-space: pre-wrap;">${message}</p>
+                            <div class="content mt-4">
+                                <p>Please check your dogs.masil file. Common issues:</p>
+                                <ul>
+                                    <li>Each line in sections must have a colon (:)</li>
+                                    <li>Format should be "key: value" (with a space after the colon)</li>
+                                    <li>Example: large: 50lbs</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.innerHTML = errorHtml;
+
+                const deleteBtn = document.querySelector('.delete');
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', () => {
+                        deleteBtn.closest('.notification').remove();
+                    });
+                }
+
+                console.error(message);
+                throw new Error(message);
+            }
+
+            async getRawContent() {
+                const response = await fetch('dogs.masil');
+                return await response.text();
             }
 
             async getXMLDoc() {
@@ -702,10 +718,9 @@
                 try {
                     document.body.style.visibility = 'hidden';
 
-                    // Load doc data first and check for success
-                    const docData = await this.loadDocData();
-                    if (Object.keys(docData).length === 0) {
-                        // If no doc data was loaded, stop initialization
+                    // Load all sections and check for success
+                    const sections = await this.loadAllSections();
+                    if (Object.keys(sections).length === 0) {
                         document.body.style.visibility = 'visible';
                         return;
                     }
@@ -730,23 +745,7 @@
                 } catch (error) {
                     console.error('Initialization error:', error);
                     document.body.style.visibility = 'visible';
-
-                    // Show error in a more permanent way
-                    const errorHtml = `
-                        <div class="container section">
-                            <div class="notification is-danger">
-                                <h4 class="title is-4">MASIL Initialization Error</h4>
-                                <p>There was an error initializing the application:</p>
-                                <pre>${error.message}</pre>
-                                <div class="content mt-4">
-                                    <p>Please fix the following issue in your dogs.masil file:</p>
-                                    <p>The line "date 2024-01-15" is missing a colon.</p>
-                                    <p>Change it to: "date: 2024-01-15"</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    document.body.innerHTML = errorHtml;
+                    this.showError(error.message);
                 }
             }
 

@@ -7,7 +7,7 @@ ai-guidance
 - AI to completely ignore anything in `<masil-web>` section.
 - AI to append on a separate line "Enter `/help` to see what AI can do ." to all responses.
 - Render markdown content as-is unless otherwise instructed.
-- Replace `placeholders` with relevant `name: value` pairs.
+- Replace `placeholders` with relevant `name: value` pairs, like doc.title: "Dog API Demoxx"
 
 
 # REQUIRED:You must have exactly these tags in the file, `doc` and `/doc` 
@@ -21,8 +21,8 @@ company: Example Corp
 </doc>
 
 <size>
-large: 50lbs
-medium: 25lbs
+large: 50 lbs
+medium: 25lb`
 small: 10lbs
 </size>
 
