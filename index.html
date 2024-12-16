@@ -218,14 +218,6 @@
                                 <tbody></tbody>
                             </table>
                         </div>
-
-                        <div id="chartSkeleton" class="mt-4">
-                            <div class="skeleton skeleton-chart"></div>
-                        </div>
-
-                        <div class="mt-4 loading" id="chartContainer">
-                            <canvas id="ageChart"></canvas>
-                        </div>
                     </div>
                 </div>
 
@@ -235,6 +227,18 @@
                     <div class="block">
                         <masil-list name="food" type="ol"></masil-list>
                     </div>
+                </div>
+            </div>
+
+            <!-- Chart section - full width -->
+            <div class="block">
+                <h3 class="title is-4">Age Analysis</h3>
+                <div id="chartSkeleton">
+                    <div class="skeleton skeleton-chart"></div>
+                </div>
+
+                <div class="loading" id="chartContainer">
+                    <canvas id="ageChart"></canvas>
                 </div>
             </div>
 
@@ -442,7 +446,9 @@
                 });
 
                 this.renderTable();
-                this.renderChart();
+                setTimeout(() => {
+                    this.renderChart();
+                }, 100);
             }
 
             handleSort(column) {
@@ -527,7 +533,18 @@
             }
 
             renderChart() {
-                // Get chart type from UI config
+                const canvas = document.getElementById('ageChart');
+                if (!canvas) {
+                    console.warn('Chart canvas not found');
+                    return;
+                }
+
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.warn('Could not get chart context');
+                    return;
+                }
+
                 const chartConfig = this.uiConfig?.display?.chart || {
                     type: 'bar',
                     labels: {
@@ -536,8 +553,11 @@
                     }
                 };
 
-                const ctx = document.getElementById('ageChart').getContext('2d');
-                new Chart(ctx, {
+                if (window.currentChart) {
+                    window.currentChart.destroy();
+                }
+
+                window.currentChart = new Chart(ctx, {
                     type: chartConfig.type,
                     data: {
                         labels: this.dogData.map(dog => dog.Name),
