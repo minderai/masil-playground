@@ -27,7 +27,7 @@ small: 10lbs
 </size>
 
 
-<list name="breeds" type="ordered-list" value="Top Breeds.">
+<list name="breeds" type="tags" value="Popular Breeds">
  Labrador
  German Shepherd
  Poodle

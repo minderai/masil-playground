@@ -908,12 +908,23 @@
                 const storedBreeds = this.placeholders['list.breeds'];
 
                 if (breedsList && storedBreeds) {
-                    breedsList.innerHTML = `
-                        <h3>${storedBreeds.value}</h3>
-                        <ol>
-                            ${storedBreeds.items.map(breed => `<li>${breed}</li>`).join('')}
-                        </ol>
-                    `;
+                    if (storedBreeds.type === 'ordered-list') {
+                        breedsList.innerHTML = `
+                            <h3>${storedBreeds.value}</h3>
+                            <ol>
+                                ${storedBreeds.items.map(breed => `<li>${breed}</li>`).join('')}
+                            </ol>
+                        `;
+                    } else if (storedBreeds.type === 'tags') {
+                        breedsList.innerHTML = `
+                            <h3>${storedBreeds.value}</h3>
+                            <div class="tags">
+                                ${storedBreeds.items.map(breed =>
+                            `<span class="tag is-primary">${breed}</span>`
+                        ).join('')}
+                            </div>
+                        `;
+                    }
                 }
             }
         }
