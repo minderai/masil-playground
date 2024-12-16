@@ -135,8 +135,8 @@
             <div class="columns is-variable is-6">
                 <!-- Left column -->
                 <div class="column is-4">
-                    <div class="block has-background-light p-5">
-                        <h3 class="title is-5">Dog Size Reference</h3>
+                    <div class="block has-background-light p-4">
+                        <h3 class="title is-6 has-text-weight-bold">Dog Size Reference</h3>
                         <div class="content">
                             <p class="mb-1">Large: [size.large]</p>
                             <p class="mb-1">Medium: [size.medium]</p>
@@ -145,20 +145,20 @@
                     </div>
 
                     <!-- Food list -->
-                    <div class="block has-background-light p-5">
+                    <div class="block has-background-light p-4">
                         <masil-list name="food" type="ol"></masil-list>
                     </div>
 
                     <!-- Breeds section -->
-                    <div class="block has-background-light p-5">
+                    <div class="block has-background-light p-4">
                         <masil-list name="breeds" type="tags"></masil-list>
                     </div>
 
                     <!-- Random breeds button section -->
-                    <div class="block has-background-light p-5">
+                    <div class="block has-background-light p-4">
                         <div class="level">
                             <div class="level-item">
-                                <button id="randomBreedButton" class="button is-success is-small">
+                                <button id="randomBreedButton" class="button is-success">
                                     Random Dog Breeds
                                 </button>
                             </div>
@@ -1032,19 +1032,13 @@
                     const listTypes = {
                         'ol': (items, value) => `
                             <div class="content">
-                                <h3>${value}</h3>
+                                <h3 class="title is-6 has-text-weight-bold">${value}</h3>
                                 <ol>${items.map(item => `<li>${item}</li>`).join('')}</ol>
-                            </div>
-                        `,
-                        'ul': (items, value) => `
-                            <div class="content">
-                                <h3>${value}</h3>
-                                <ul>${items.map(item => `<li>${item}</li>`).join('')}</ul>
                             </div>
                         `,
                         'tags': (items, value) => `
                             <div class="content">
-                                <h3>${value}</h3>
+                                <h3 class="title is-6 has-text-weight-bold">${value}</h3>
                                 <div class="tags">
                                     ${items.map(item => `<span class="tag is-dark">${item}</span>`).join('')}
                                 </div>
