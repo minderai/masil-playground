@@ -698,6 +698,13 @@
                 const result = document.getElementById('randomBreedResult');
 
                 if (button && result && this.apiConfig?.params) {
+                    // Apply button config from UI config
+                    if (this.uiConfig?.display?.buttons?.randomBreed) {
+                        const btnConfig = this.uiConfig.display.buttons.randomBreed;
+                        button.textContent = btnConfig.text;
+                        button.className = `button ${btnConfig.class}`;
+                    }
+
                     button.addEventListener('click', () => {
                         const breeds = this.generateRandomBreed();
                         result.innerHTML = `
