@@ -27,6 +27,15 @@ small: 10lbs
 </size>
 
 
+<list name="breeds" type="ordered-list" value="Top Breeds.">
+  - Labrador
+  - German Shepherd
+  - Poodle
+  - Husky
+  - Bulldog
+</list>
+
+
 welcome_message:
 ### Welcome to: [doc.title].
 > You can interact with the database using the following commands or natural language:

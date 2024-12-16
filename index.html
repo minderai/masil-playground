@@ -151,6 +151,13 @@
                     </div>
                 </div>
 
+                <!-- Add new box for permanent breed list -->
+                <div class="box">
+                    <div class="content" id="storedBreedsList">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
                 <div class="box">
                     <h3 class="title is-4">Dog Database</h3>
                     <!-- Skeleton loader for table -->
@@ -269,7 +276,7 @@
                 const text = await this.getRawContent();
 
                 try {
-                    // Load each section
+                    // First handle regular sections
                     for (const sectionName of Object.keys(this.placeholders)) {
                         const sectionData = await this.loadSection(sectionName, text);
                         if (sectionData) {
@@ -282,10 +289,27 @@
                         }
                     }
 
+                    // Then handle list tags
+                    const listMatches = text.matchAll(/<list name="([^"]+)" type="([^"]+)" value="([^"]+)">([\s\S]*?)<\/list>/g);
+                    for (const match of listMatches) {
+                        const [_, name, type, value, items] = match;
+                        const listItems = items.split('\n')
+                            .map(line => line.trim())
+                            .filter(line => line.startsWith('- '))
+                            .map(line => line.slice(2).trim());
+
+                        this.placeholders[`list.${name}`] = {
+                            type,
+                            value,
+                            items: listItems
+                        };
+                    }
+
                     if (Object.values(this.placeholders).every(section => Object.keys(section).length === 0)) {
                         throw new Error('No valid sections found in the file');
                     }
 
+                    console.log('Final placeholders:', this.placeholders); // Debug
                     return this.placeholders;
 
                 } catch (error) {
@@ -337,8 +361,16 @@
 
                 // Replace all placeholders in the content
                 Object.entries(this.placeholders).forEach(([key, value]) => {
+                    // Handle both simple values and objects
+                    const replacementValue = typeof value === 'object' ?
+                        (value.value || JSON.stringify(value)) : value;
+
                     const regex = new RegExp(`\\[${key}\\]`, 'g');
-                    processedText = processedText.replace(regex, value);
+                    processedText = processedText.replace(regex, replacementValue);
+
+                    // Also try with dot notation
+                    const dotRegex = new RegExp(`\\[${key.replace('.', '\\.')}\\]`, 'g');
+                    processedText = processedText.replace(dotRegex, replacementValue);
                 });
 
                 const parser = new DOMParser();
@@ -624,17 +656,28 @@
                 const button = document.getElementById('randomBreedButton');
                 const result = document.getElementById('randomBreedResult');
 
-                if (button && result && this.apiConfig?.params) {  // Check if params exists
+                if (button && result && this.apiConfig?.params) {  // Keep original config check
                     button.textContent = this.apiConfig.params.buttonText;
                     button.className = `button ${this.apiConfig.params.buttonClass}`;
 
                     button.addEventListener('click', () => {
                         const breeds = this.generateRandomBreed();
+                        const storedBreeds = this.placeholders['list.breeds'];
+
                         result.innerHTML = `
-                            <strong>Random Breeds:</strong>
-                            <ul>
-                                ${breeds.map(breed => `<li>${breed}</li>`).join('')}
-                            </ul>
+                            <div class="content">
+                                <strong>Random Breeds:</strong>
+                                <ul>
+                                    ${breeds.map(breed => `<li>${breed}</li>`).join('')}
+                                </ul>
+                                
+                                <div class="mt-4">
+                                    <h3>${storedBreeds.value}</h3>
+                                    <ol>
+                                        ${storedBreeds.items.map(breed => `<li>${breed}</li>`).join('')}
+                                    </ol>
+                                </div>
+                            </div>
                         `;
                     });
                 } else {
@@ -679,9 +722,20 @@
 
                     // Replace all placeholders in this text node
                     Object.entries(this.placeholders).forEach(([key, value]) => {
+                        // Handle both simple values and objects
+                        const replacementValue = typeof value === 'object' ?
+                            (value.value || JSON.stringify(value)) : value;
+
                         const regex = new RegExp(`\\[${key}\\]`, 'g');
                         if (content.match(regex)) {
-                            content = content.replace(regex, value);
+                            content = content.replace(regex, replacementValue);
+                            hasChanges = true;
+                        }
+
+                        // Also try with dot notation
+                        const dotRegex = new RegExp(`\\[${key.replace('.', '\\.')}\\]`, 'g');
+                        if (content.match(dotRegex)) {
+                            content = content.replace(dotRegex, replacementValue);
                             hasChanges = true;
                         }
                     });
@@ -691,16 +745,25 @@
                     }
                 }
 
-                // Replace placeholders in attributes
+                // Replace placeholders in attributes with same logic
                 document.querySelectorAll('*').forEach(element => {
                     Array.from(element.attributes).forEach(attr => {
                         let value = attr.value;
                         let hasChanges = false;
 
                         Object.entries(this.placeholders).forEach(([key, placeholder]) => {
+                            const replacementValue = typeof placeholder === 'object' ?
+                                (placeholder.value || JSON.stringify(placeholder)) : placeholder;
+
                             const regex = new RegExp(`\\[${key}\\]`, 'g');
                             if (value.match(regex)) {
-                                value = value.replace(regex, placeholder);
+                                value = value.replace(regex, replacementValue);
+                                hasChanges = true;
+                            }
+
+                            const dotRegex = new RegExp(`\\[${key.replace('.', '\\.')}\\]`, 'g');
+                            if (value.match(dotRegex)) {
+                                value = value.replace(dotRegex, replacementValue);
                                 hasChanges = true;
                             }
                         });
@@ -733,6 +796,9 @@
                     this.setupRandomBreeds();
                     this.setupTheme();
                     this.updateTitleElements();
+
+                    // Add this new line to display breeds list
+                    this.displayStoredBreeds();
 
                     this.initialized = true;
 
@@ -833,6 +899,21 @@
                             `;
                         }
                     }
+                }
+            }
+
+            // Add new method
+            displayStoredBreeds() {
+                const breedsList = document.getElementById('storedBreedsList');
+                const storedBreeds = this.placeholders['list.breeds'];
+
+                if (breedsList && storedBreeds) {
+                    breedsList.innerHTML = `
+                        <h3>${storedBreeds.value}</h3>
+                        <ol>
+                            ${storedBreeds.items.map(breed => `<li>${breed}</li>`).join('')}
+                        </ol>
+                    `;
                 }
             }
         }
