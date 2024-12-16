@@ -608,26 +608,23 @@
 
             async loadConfigs() {
                 const xmlDoc = await this.getXMLDoc();
-
-                // Load API config
-                const apiData = xmlDoc.querySelector('masil-data[name="dog-api"]');
-                if (apiData) {
+                if (xmlDoc) {
                     try {
-                        this.apiConfig = JSON.parse(apiData.textContent.trim());
-                        console.log('Loaded API config:', this.apiConfig); // Debug log
-                    } catch (error) {
-                        console.error('Error parsing API config:', error);
-                    }
-                }
+                        // Load API config
+                        const apiConfig = xmlDoc.querySelector('masil-data[name="api-config"]');
+                        if (apiConfig) {
+                            this.apiConfig = JSON.parse(apiConfig.textContent.trim());
+                            console.log('Loaded API config:', this.apiConfig);
+                        }
 
-                // Load UI config
-                const uiConfigData = xmlDoc.querySelector('masil-data[name="ui-config"]');
-                if (uiConfigData) {
-                    try {
-                        this.uiConfig = JSON.parse(uiConfigData.textContent.trim());
-                        console.log('Loaded UI config:', this.uiConfig); // Debug log
+                        // Load UI config
+                        const uiConfig = xmlDoc.querySelector('masil-data[name="ui-config"]');
+                        if (uiConfig) {
+                            this.uiConfig = JSON.parse(uiConfig.textContent.trim());
+                            console.log('Loaded UI config:', this.uiConfig);
+                        }
                     } catch (error) {
-                        console.error('Error parsing UI config:', error);
+                        console.error('Error loading configs:', error);
                     }
                 }
             }
@@ -637,8 +634,8 @@
                     const count = this.apiConfig.params.count || 1;
                     const moduleCall = this.apiConfig.module;
 
-                    // Convert string "faker.animal.cat()" into actual function call
-                    const parts = moduleCall.replace('()', '').split('.');
+                    // Convert string "faker.animal.dog" into actual function call
+                    const parts = moduleCall.split('.');
                     let func = window;
                     for (const part of parts) {
                         func = func[part];
@@ -654,27 +651,18 @@
                 const button = document.getElementById('randomBreedButton');
                 const result = document.getElementById('randomBreedResult');
 
-                if (button && result && this.apiConfig?.params) {  // Keep original config check
+                if (button && result && this.apiConfig?.params) {
                     button.textContent = this.apiConfig.params.buttonText;
                     button.className = `button ${this.apiConfig.params.buttonClass}`;
 
                     button.addEventListener('click', () => {
                         const breeds = this.generateRandomBreed();
-                        const storedBreeds = this.placeholders['list.breeds'];
-
                         result.innerHTML = `
                             <div class="content">
                                 <strong>Random Breeds:</strong>
                                 <ul>
                                     ${breeds.map(breed => `<li>${breed}</li>`).join('')}
                                 </ul>
-                                
-                                <div class="mt-4">
-                                    <h3>${storedBreeds.value}</h3>
-                                    <ol>
-                                        ${storedBreeds.items.map(breed => `<li>${breed}</li>`).join('')}
-                                    </ol>
-                                </div>
                             </div>
                         `;
                     });

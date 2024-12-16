@@ -130,7 +130,7 @@ Charlie,5,green,Husky,12,Stubborn
                     "module": "faker.animal.dog",
                     "params": {
                         "count": 5,
-                        "buttonText": "Generate Random Dogs",
+                        "buttonText": "Generate Random Dogszzz",
                         "buttonClass": "is-primary is-medium"
                     }
                 }
@@ -149,7 +149,7 @@ Charlie,5,green,Husky,12,Stubborn
                             "columns": ["Name", "Age", "Color", "Breed", "Lifespan", "Temperament"]
                         },
                         "chart": {
-                            "type": "line",
+                            "type": "bar",
                             "colors": {
                                 "age": "rgba(54, 162, 235, 0.5)",
                                 "lifespan": "rgba(255, 99, 132, 0.5)"
