@@ -225,8 +225,18 @@
                     <div class="content mt-2">
                         <div class="tabs">
                             <ul>
-                                <li class="is-active" data-tab="plain-text"><a>Plain Text</a></li>
-                                <li data-tab="markdown-preview"><a>Markdown Preview</a></li>
+                                <li class="is-active" data-tab="plain-text">
+                                    <a>
+                                        <span class="icon is-small"><i class="fas fa-edit"></i></span>
+                                        <span>Edit</span>
+                                    </a>
+                                </li>
+                                <li data-tab="markdown-preview">
+                                    <a>
+                                        <span class="icon is-small"><i class="fas fa-eye"></i></span>
+                                        <span>Preview</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
 
@@ -1193,15 +1203,19 @@
 
             // Handle tab switching
             tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
+                tab.addEventListener('click', (event) => {
+                    // Get the li element (tab), even if a child element was clicked
+                    const clickedTab = event.target.closest('li');
+                    if (!clickedTab) return;
+
                     // Remove active class from all tabs
                     tabs.forEach(t => t.classList.remove('is-active'));
                     // Hide all tab contents
                     tabContents.forEach(content => content.style.display = 'none');
 
                     // Activate clicked tab
-                    tab.classList.add('is-active');
-                    const tabId = tab.dataset.tab;
+                    clickedTab.classList.add('is-active');
+                    const tabId = clickedTab.dataset.tab;
                     document.getElementById(tabId).style.display = 'block';
 
                     // Update markdown preview if needed
