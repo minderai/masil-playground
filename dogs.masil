@@ -28,11 +28,11 @@ small: 10lbs
 
 
 <list name="breeds" type="ordered-list" value="Top Breeds.">
-  - Labrador
-  - German Shepherd
-  - Poodle
-  - Husky
-  - Bulldog
+ Labrador
+ German Shepherd
+ Poodle
+ Husky
+ Bulldog
 </list>
 
 
