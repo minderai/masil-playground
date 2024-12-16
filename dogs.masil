@@ -13,11 +13,10 @@
 
     <size>
         large: 50 lbs
-        medium: 25lb`
+        medium: 25lb
         small: 10lbs
     </size>
 
-    <!-- Rest of AI section -->
     welcome_message:
     ### Welcome to: [doc.title].
     > You can interact with the database using the following commands or natural language:
@@ -57,7 +56,8 @@
     _by: [doc.author]_
 
     [data-table]
-
+        <!-- END of AI Comment section -->
+    <masil>
         <masil-data name="dogs">
             <![CDATA[
 Name,Age,Color,Breed,Lifespan,Temperament
