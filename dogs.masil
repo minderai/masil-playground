@@ -12,16 +12,24 @@ ai-guidance
 
 # REQUIRED:You must have exactly these tags in the file, `doc` and `/doc` 
 <doc>
-  title: Dog API Demoxx
-  author: John Doexx
-  version: 1.0
-  date: 2024-01-15
-  description: A demo of the Dog API integration
-  company: Example Corp
+title: Dog API Demoxx
+author: John Doexx
+version: 1.0
+date: 2024-01-15
+description: A demo of the Dog API integration
+company: Example Corp
 </doc>
+
+<size>
+large: 50lbs
+medium: 25lbs
+small: 10lbs
+</size>
+
 
 welcome_message:
 ### Welcome to: [doc.title].
+### Dogs size is: [size.large].
 > You can interact with the database using the following commands or natural language:
 - `/report` to display `markdown_report` 
 - `/explain` to display `report` with data in tabular form
