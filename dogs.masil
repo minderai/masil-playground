@@ -26,7 +26,7 @@ medium: 25lb`
 small: 10lbs
 </size>
 
-
+# Options for `type` are `tags` or `ordered-list`
 <list name="breeds" type="tags" value="Popular Breeds">
  Labrador
  German Shepherd
