@@ -268,66 +268,51 @@
             }
 
             async loadAllSections() {
-                const xmlDoc = await this.getXMLDoc();
+                const text = await this.getRawContent();
 
                 try {
-                    const sections = xmlDoc.querySelectorAll('masil > *');
+                    // First handle regular sections
+                    for (const sectionName of Object.keys(this.placeholders)) {
+                        const sectionData = await this.loadSection(sectionName, text);
+                        if (sectionData) {
+                            this.placeholders[sectionName] = sectionData;
 
-                    // Process masil-data sections first (no async needed)
-                    sections.forEach(section => {
-                        if (section.nodeName.toLowerCase() === 'masil-data') {
-                            const name = section.getAttribute('name');
-                            const format = section.getAttribute('format');
-                            const type = section.getAttribute('type');
-
-                            if (!name) return;
-
-                            // Get CDATA content (we trust it's there due to schema)
-                            const content = section.textContent.trim();
-
-                            if (format === 'list') {
-                                this.processListData(name, type, content);
-                            } else if (type === 'json') {
-                                this.processJsonData(name, content);
-                            } else {
-                                this.processRawData(name, content);
-                            }
+                            // Create prefixed placeholders for compatibility
+                            Object.entries(sectionData).forEach(([key, value]) => {
+                                this.placeholders[`${sectionName}.${key}`] = value;
+                            });
                         }
-                    });
+                    }
 
-                    // Then process configuration sections
-                    sections.forEach(section => {
-                        const nodeName = section.nodeName.toLowerCase();
-                        if (nodeName === 'doc' || nodeName === 'size') {
-                            this.loadConfigSection(section);
-                        }
-                    });
+                    // Then handle list tags
+                    const listMatches = text.matchAll(/<masil-data name="([^"]+)" format="list" type="([^"]+)">\s*<!\[CDATA\[([\s\S]*?)\]\]>/g);
+                    for (const match of listMatches) {
+                        const [_, name, type, content] = match;
 
+                        // Parse YAML-like content
+                        const lines = content.split('\n').map(line => line.trim());
+                        const title = lines.find(line => line.startsWith('title:'))?.split(':')[1].trim();
+                        const items = lines
+                            .filter(line => line.startsWith('- '))
+                            .map(line => line.slice(2).trim());
+
+                        this.placeholders[`list.${name}`] = {
+                            type,
+                            value: title,
+                            items: items
+                        };
+                    }
+
+                    if (Object.values(this.placeholders).every(section => Object.keys(section).length === 0)) {
+                        throw new Error('No valid sections found in the file');
+                    }
+
+                    console.log('Final placeholders:', this.placeholders); // Debug
                     return this.placeholders;
+
                 } catch (error) {
-                    console.error('Error processing sections:', error);
-                    throw error;
-                }
-            }
-
-            async loadDataSection(section) {
-                const name = section.getAttribute('name');
-                const format = section.getAttribute('format');
-                const type = section.getAttribute('type');
-
-                if (!name) return;
-
-                const content = section.textContent.trim();
-
-                if (format === 'list') {
-                    // Handle list data
-                    this.processListData(name, type, content);
-                } else if (type === 'json') {
-                    // Handle JSON data
-                    this.processJsonData(name, content);
-                } else {
-                    // Handle other data (like CSV)
-                    this.processRawData(name, content);
+                    this.showError(error.message);
+                    return {};
                 }
             }
 
@@ -623,23 +608,26 @@
 
             async loadConfigs() {
                 const xmlDoc = await this.getXMLDoc();
-                if (xmlDoc) {
-                    try {
-                        // Load API config
-                        const apiConfig = xmlDoc.querySelector('masil-data[name="api-config"]');
-                        if (apiConfig) {
-                            this.apiConfig = JSON.parse(apiConfig.textContent.trim());
-                            console.log('Loaded API config:', this.apiConfig);
-                        }
 
-                        // Load UI config
-                        const uiConfig = xmlDoc.querySelector('masil-data[name="ui-config"]');
-                        if (uiConfig) {
-                            this.uiConfig = JSON.parse(uiConfig.textContent.trim());
-                            console.log('Loaded UI config:', this.uiConfig);
-                        }
+                // Load API config
+                const apiData = xmlDoc.querySelector('masil-data[name="dog-api"]');
+                if (apiData) {
+                    try {
+                        this.apiConfig = JSON.parse(apiData.textContent.trim());
+                        console.log('Loaded API config:', this.apiConfig); // Debug log
                     } catch (error) {
-                        console.error('Error loading configs:', error);
+                        console.error('Error parsing API config:', error);
+                    }
+                }
+
+                // Load UI config
+                const uiConfigData = xmlDoc.querySelector('masil-data[name="ui-config"]');
+                if (uiConfigData) {
+                    try {
+                        this.uiConfig = JSON.parse(uiConfigData.textContent.trim());
+                        console.log('Loaded UI config:', this.uiConfig); // Debug log
+                    } catch (error) {
+                        console.error('Error parsing UI config:', error);
                     }
                 }
             }
@@ -649,8 +637,8 @@
                     const count = this.apiConfig.params.count || 1;
                     const moduleCall = this.apiConfig.module;
 
-                    // Convert string "faker.animal.dog" into actual function call
-                    const parts = moduleCall.split('.');
+                    // Convert string "faker.animal.cat()" into actual function call
+                    const parts = moduleCall.replace('()', '').split('.');
                     let func = window;
                     for (const part of parts) {
                         func = func[part];
@@ -666,18 +654,27 @@
                 const button = document.getElementById('randomBreedButton');
                 const result = document.getElementById('randomBreedResult');
 
-                if (button && result && this.apiConfig?.params) {
+                if (button && result && this.apiConfig?.params) {  // Keep original config check
                     button.textContent = this.apiConfig.params.buttonText;
                     button.className = `button ${this.apiConfig.params.buttonClass}`;
 
                     button.addEventListener('click', () => {
                         const breeds = this.generateRandomBreed();
+                        const storedBreeds = this.placeholders['list.breeds'];
+
                         result.innerHTML = `
                             <div class="content">
                                 <strong>Random Breeds:</strong>
                                 <ul>
                                     ${breeds.map(breed => `<li>${breed}</li>`).join('')}
                                 </ul>
+                                
+                                <div class="mt-4">
+                                    <h3>${storedBreeds.value}</h3>
+                                    <ol>
+                                        ${storedBreeds.items.map(breed => `<li>${breed}</li>`).join('')}
+                                    </ol>
+                                </div>
                             </div>
                         `;
                     });
@@ -898,97 +895,6 @@
                         }
                     }
                 }
-            }
-
-            async loadConfigSection(section) {
-                const nodeName = section.nodeName.toLowerCase();
-                const sectionData = {};
-
-                // Process each line in the section
-                const lines = section.textContent.trim().split('\n');
-                lines.forEach((line, index) => {
-                    line = line.trim();
-                    if (line && !line.startsWith('#')) {
-                        if (!line.includes(':')) {
-                            throw new Error(`Error in ${nodeName} line ${index + 1}: "${line}"\n\nExpected format: "name: value"`);
-                        }
-
-                        const [key, value] = line.split(':').map(s => s.trim());
-                        if (!key || !value) {
-                            throw new Error(`Error in ${nodeName} line ${index + 1}: "${line}"\n\nBoth name and value required`);
-                        }
-
-                        // Validate key format
-                        if (!key.match(/^[a-zA-Z][a-zA-Z0-9_]*$/)) {
-                            throw new Error(`Error in ${nodeName} line ${index + 1}: "${key}"\n\nInvalid name format`);
-                        }
-
-                        sectionData[key] = value;
-                    }
-                });
-
-                // Store in placeholders
-                this.placeholders[nodeName] = sectionData;
-
-                // Create prefixed placeholders
-                Object.entries(sectionData).forEach(([key, value]) => {
-                    this.placeholders[`${nodeName}.${key}`] = value;
-                });
-            }
-
-            async loadWebSection(section) {
-                // Process web section (markdown, configs, etc)
-                const markdowns = section.querySelectorAll('markdown');
-                const configs = section.querySelectorAll('masil-data[type="json"]');
-
-                // Process markdowns
-                markdowns.forEach(markdown => {
-                    const name = markdown.getAttribute('name');
-                    if (name) {
-                        this.placeholders[`markdown.${name}`] = markdown.textContent.trim();
-                    }
-                });
-
-                // Process JSON configs
-                configs.forEach(config => {
-                    const name = config.getAttribute('name');
-                    if (name) {
-                        try {
-                            const data = JSON.parse(config.textContent.trim());
-                            this.placeholders[name] = data;
-                        } catch (error) {
-                            console.error(`Error parsing JSON config ${name}:`, error);
-                        }
-                    }
-                });
-            }
-
-            async processListData(name, type, content) {
-                // Parse YAML-like content
-                const lines = content.split('\n').map(line => line.trim());
-                const title = lines.find(line => line.startsWith('title:'))?.split(':')[1].trim();
-                const items = lines
-                    .filter(line => line.startsWith('- '))
-                    .map(line => line.slice(2).trim());
-
-                this.placeholders[`list.${name}`] = {
-                    type,
-                    value: title,
-                    items: items
-                };
-            }
-
-            async processJsonData(name, content) {
-                try {
-                    const data = JSON.parse(content);
-                    this.placeholders[name] = data;
-                } catch (error) {
-                    console.error(`Error parsing JSON data for ${name}:`, error);
-                }
-            }
-
-            async processRawData(name, content) {
-                this.placeholders[name] = content;
             }
         }
 
