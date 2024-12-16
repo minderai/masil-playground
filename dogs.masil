@@ -26,9 +26,8 @@ medium: 25lb`
 small: 10lbs
 </size>
 
-# Options for `type` are `tags` or `ordered-list`
-<list name="breeds" type="tags" value="Popular Breeds">
- Labrador
+# Options for `type` are `tags`, `ordered-list`, or `unordered-list`
+<list name="breeds" type="ordered-list" value="Popular Breeds">
  German Shepherd
  Poodle
  Husky

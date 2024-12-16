@@ -908,23 +908,31 @@
                 const storedBreeds = this.placeholders['list.breeds'];
 
                 if (breedsList && storedBreeds) {
-                    if (storedBreeds.type === 'ordered-list') {
-                        breedsList.innerHTML = `
+                    const listTypes = {
+                        'ordered-list': items => `
                             <h3>${storedBreeds.value}</h3>
                             <ol>
-                                ${storedBreeds.items.map(breed => `<li>${breed}</li>`).join('')}
+                                ${items.map(breed => `<li>${breed}</li>`).join('')}
                             </ol>
-                        `;
-                    } else if (storedBreeds.type === 'tags') {
-                        breedsList.innerHTML = `
+                        `,
+                        'unordered-list': items => `
+                            <h3>${storedBreeds.value}</h3>
+                            <ul>
+                                ${items.map(breed => `<li>${breed}</li>`).join('')}
+                            </ul>
+                        `,
+                        'tags': items => `
                             <h3>${storedBreeds.value}</h3>
                             <div class="tags">
-                                ${storedBreeds.items.map(breed =>
+                                ${items.map(breed =>
                             `<span class="tag is-primary">${breed}</span>`
                         ).join('')}
                             </div>
-                        `;
-                    }
+                        `
+                    };
+
+                    const renderer = listTypes[storedBreeds.type] || listTypes['unordered-list'];
+                    breedsList.innerHTML = renderer(storedBreeds.items);
                 }
             }
         }
