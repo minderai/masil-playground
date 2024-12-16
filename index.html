@@ -160,27 +160,23 @@
                 <!-- Left column -->
                 <div class="column is-3">
                     <div class="box">
-                        <h3 class="title is-5">Dog Size Reference</h3>
-                        <div class="content">
-                            <p>Large: [size.large]</p>
-                            <p>Medium: [size.medium]</p>
-                            <p>Small: [size.small]</p>
+                        <h3 class="title is-6">Dog Size Reference</h3>
+                        <div class="content is-small">
+                            <p class="mb-1">Large: [size.large]</p>
+                            <p class="mb-1">Medium: [size.medium]</p>
+                            <p class="mb-1">Small: [size.small]</p>
                         </div>
                     </div>
 
                     <div class="box">
-                        <div class="level">
+                        <div class="level mb-2">
                             <div class="level-item">
-                                <button id="randomBreedButton" class="button is-light is-small">
-                                    Random Breeds
+                                <button id="randomBreedButton" class="button is-danger is-small">
+                                    Random Dog Breeds
                                 </button>
                             </div>
                         </div>
-                        <div id="randomBreedResult" class="mt-3"></div>
-                    </div>
-
-                    <!-- Breeds list -->
-                    <div class="box">
+                        <div id="randomBreedResult" class="content is-small mb-4"></div>
                         <masil-list name="breeds" type="tags"></masil-list>
                     </div>
                 </div>
@@ -702,10 +698,6 @@
                 const result = document.getElementById('randomBreedResult');
 
                 if (button && result && this.apiConfig?.params) {
-                    // Set button text and class from config
-                    button.textContent = this.apiConfig.params.buttonText;
-                    button.className = `button ${this.apiConfig.params.buttonClass}`;
-
                     button.addEventListener('click', () => {
                         const breeds = this.generateRandomBreed();
                         result.innerHTML = `
@@ -717,8 +709,6 @@
                             </div>
                         `;
                     });
-                } else {
-                    console.warn('Random breeds feature disabled - missing configuration or DOM elements');
                 }
             }
 

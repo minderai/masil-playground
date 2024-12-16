@@ -56,7 +56,7 @@
     _by: [doc.author]_
 
     [data-table]
-                                        <!-- END - AI comments section -->
+                                            <!-- END - AI comments section -->
     <masil>
         <masil-data name="dogs">
             <![CDATA[
@@ -132,9 +132,7 @@ Charlie,5,green,Husky,12,Stubborn
                 {
                     "module": "faker.animal.dog",
                     "params": {
-                        "count": 5,
-                        "buttonText": "Random Dog Breeds",
-                        "buttonClass": "is-danger is-small"
+                        "count": 5
                     }
                 }
                 ]]>
