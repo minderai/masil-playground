@@ -56,7 +56,7 @@
     _by: [doc.author]_
 
     [data-table]
-                            <!-- END - AI comments section -->
+                                        <!-- END - AI comments section -->
     <masil>
         <masil-data name="dogs">
             <![CDATA[
@@ -108,8 +108,10 @@ Charlie,5,green,Husky,12,Stubborn
 
             <markdown name="footer">
                 <![CDATA[
-                ### Footer Component from MASIL xxx
-                <strong>Strong!</strong>
+                ### Dog Database Footer
+                Created with ❤️ by Example Corp
+                
+                **[doc.company]** | Version [doc.version]
                 ]]>
             </markdown>
 
@@ -131,8 +133,8 @@ Charlie,5,green,Husky,12,Stubborn
                     "module": "faker.animal.dog",
                     "params": {
                         "count": 5,
-                        "buttonText": "Generate Random Dogs",
-                        "buttonClass": "is-primary is-medium"
+                        "buttonText": "Random Dog Breeds",
+                        "buttonClass": "is-danger is-small"
                     }
                 }
                 ]]>

@@ -31,6 +31,32 @@
             transition: all 0.3s ease;
         }
 
+        /* Dark theme styles */
+        .theme-dark {
+            background-color: #363636;
+            color: #fff;
+        }
+
+        .theme-dark .hero.is-primary {
+            background-color: #242424 !important;
+            color: #fff;
+        }
+
+        .theme-dark .box {
+            background-color: #424242;
+            color: #fff;
+        }
+
+        .theme-dark .table {
+            background-color: #363636;
+            color: #fff;
+        }
+
+        .theme-dark .footer {
+            background-color: #242424;
+            color: #fff;
+        }
+
         /* Skeleton loading styles */
         .skeleton {
             background: #f0f0f0;
@@ -145,8 +171,8 @@
                     <div class="box">
                         <div class="level">
                             <div class="level-item">
-                                <button id="randomBreedButton" class="button is-primary">
-                                    Random Breed
+                                <button id="randomBreedButton" class="button is-light is-small">
+                                    Random Breeds
                                 </button>
                             </div>
                         </div>
@@ -213,7 +239,9 @@
 
             <!-- Help section at bottom -->
             <div class="box mt-6">
-                <masil-markdown help></masil-markdown>
+                <div class="content">
+                    <masil-markdown help></masil-markdown>
+                </div>
             </div>
         </div>
     </section>
@@ -221,7 +249,7 @@
     <!-- New footer section -->
     <footer class="footer">
         <div class="container">
-            <div class="content has-text-centered">
+            <div class="content">
                 <masil-markdown footer></masil-markdown>
             </div>
         </div>
@@ -706,6 +734,7 @@
                         // Toggle theme classes
                         document.documentElement.classList.toggle('theme-dark');
                         document.body.classList.toggle('theme-dark');
+                        document.querySelector('.hero').classList.toggle('theme-dark');
 
                         // Toggle on all boxes and tables
                         document.querySelectorAll('.box, .table, .content, .footer').forEach(element => {
