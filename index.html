@@ -9,6 +9,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@faker-js/faker/dist/faker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
     <title>[doc.title]</title>
     <style>
         /* Apply smooth transitions to all elements */
@@ -216,10 +219,28 @@
             </div>
 
             <!-- Help section -->
-            <div class="block has-background-light p-5 mt-6">
-                <div class="content">
-                    <masil-markdown help></masil-markdown>
-                </div>
+            <div class="block has-background-light p-4 mt-6">
+                <details>
+                    <summary class="title is-6 has-text-weight-bold">Help for users</summary>
+                    <div class="content mt-2">
+                        <ol>
+                            <li>Copy the entire .minder file and paste it into ChatGPT</li>
+                            <li>Use commands like /random, /validate, or /help in ChatGPT</li>
+                            <li>Copy any new data back into the .minder file</li>
+                            <li>Refresh this page to see the updated visualization</li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+
+            <!-- MASIL Source section -->
+            <div class="block has-background-light p-4">
+                <details>
+                    <summary class="title is-6 has-text-weight-bold">View MASIL source code</summary>
+                    <div class="content mt-2">
+                        <pre><code class="language-yaml" id="masilSource">Loading...</code></pre>
+                    </div>
+                </details>
             </div>
         </div>
     </section>
@@ -818,6 +839,15 @@
                     if (Object.keys(sections).length === 0) {
                         document.body.style.visibility = 'visible';
                         return;
+                    }
+
+                    // Load MASIL source code
+                    const masilResponse = await fetch('dogs.masil');
+                    const masilText = await masilResponse.text();
+                    const sourceElement = document.getElementById('masilSource');
+                    if (sourceElement) {
+                        sourceElement.textContent = masilText;
+                        hljs.highlightElement(sourceElement);
                     }
 
                     await this.replacePlaceholdersInDOM();
