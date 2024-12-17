@@ -2,16 +2,14 @@
 
 ## MASIL the Maestro
 
-MASIL orchestrates a technological symphony with AI as the lead performer, precisely directing digital instruments to create a beautiful, harmonious, predictable composition.
+MASIL conducts a technological orchestra with AI as the virtuoso performer. The opera unfolds as AI, web technologies, and user interfaces play their parts in perfect harmony, creating a predictable and beautiful digital composition.
 
-## In a rush?
+## In a rush? -Play with MASIL here:
 
-- Play with MASIL here:
-- Click on glitch.com link
-- https://aiminder.org
+click on Glitch.com link
+https:aiminder.org
 
-## Introduction
-
+#Introduction
 My Company, SimplerTasks Company, will soon announce the pre-release of MASIL (Minder AI Structured Interactive Language) as a fully open standard under the MIT license. This innovative specification is designed to revolutionize how developers and non-programmers interact with AI systems. This frontier structured language combines the simplicity of XML with powerful AI-centric features, setting a new foundation for AI application development.
 
 MASIL is an innovative language bridging the gap between human intent, AI capabilities, and web technologies. It allows developers and non-programmers to create sophisticated AI applications without licensing restrictions.
@@ -25,7 +23,7 @@ I requested ChatGPT to give me a critical and candid opinion; ChatGPT evaluated 
 
 "MASIL is, in my candid view, a game changer because it addresses a foundational gap in how AI systems handle workflows and human interactions. The introduction of a structured, extensible language like MASIL solves one of the most persistent problems in AI: the lack of predictability and consistency in outcomes. By bridging the gap between natural language chaos and machine precision, MASIL provides a framework that is both accessible to non-programmers and powerful enough for developers."
 
-Perhaps a mere hallucination or a valid prediction; only time will tell. I've never believed in the old saying, "If you build it, they will come." There is a lot more to it than just building it.
+Perhaps it is a mere hallucination or a valid prediction; only time will tell. I've never believed in the old saying, "If you build it, they will come." There is a lot more to it than just building it.
 
 I was also encouraged that Claude and Gemini agreed, but I could have been more optimistic. I'm a bit skeptical, but I remained very confident about MASIL's future. More brilliant minds than mine could propel the standard forward.
 
@@ -102,3 +100,13 @@ Adopting the MASIL standard by large language models would be a massive step for
 ## Call to Action
 
 MASIL is an evolving standard, and I welcome your feedback! Check out the pre-release (proof of concept). Experiment with it, and share your thoughts. Let's shape the future of AI development together!
+
+## Disclaimer
+
+At age 71, I could not have created and tested MASIL without the help of Claude, Gemini, and ChatGPT. My most significant contribution was keeping things simple and explaining my hopes to an AI unfamiliar with a proposed frontier standard.
+
+## Article Authoring Credits
+
+Three language models and one human bean :)
+
+- and a little Grammarly thrown in for good measure.
