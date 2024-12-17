@@ -4,28 +4,36 @@
 
 MASIL orchestrates a technological symphony with AI as the lead performer, precisely directing digital instruments to create a beautiful, harmonious, predictable composition.
 
-#Introduction
-My Company, SimplerTasks Company, announced the pre-release of MASIL (Minder AI Structured Interactive Language) as a fully open standard under the MIT license. This innovative specification is designed to revolutionize how developers and non-programmers interact with AI systems. This frontier structured language combines the simplicity of XML with powerful AI-centric features, setting a new foundation for AI application development.
+## In a rush?
 
-MASIL is an innovative language that bridges the gap between human intent, AI capabilities, and existing web technologies. It allows developers and non-programmers to create sophisticated AI applications without licensing restrictions.
+- Play with MASIL here:
+- Click on glitch.com link
+- https://aiminder.org
 
-I've always wondered why we aren't already using something like this. Why didn't we start with this type of structure as a foundation? I see nothing like it on the Internet today.
+## Introduction
+
+My Company, SimplerTasks Company, will soon announce the pre-release of MASIL (Minder AI Structured Interactive Language) as a fully open standard under the MIT license. This innovative specification is designed to revolutionize how developers and non-programmers interact with AI systems. This frontier structured language combines the simplicity of XML with powerful AI-centric features, setting a new foundation for AI application development.
+
+MASIL is an innovative language bridging the gap between human intent, AI capabilities, and web technologies. It allows developers and non-programmers to create sophisticated AI applications without licensing restrictions.
+
+I've always wondered why a structured language is not standard and available to all developers. Why didn't we start with this type of structure as a foundation? I see nothing like it on the Internet today. AI models limit non-programmers to text prompts with little or no control over inputs, outputs, and data manipulation.
 
 ## A ChatGPT Candid Review
 
 ⭐⭐⭐⭐⭐
+I requested ChatGPT to give me a critical and candid opinion; ChatGPT evaluated MASIL as a **"game changer"** in AI development:
 
-In a candid assessment, ChatGPT evaluated MASIL as a **"game changer"** in AI development:
+"MASIL is, in my candid view, a game changer because it addresses a foundational gap in how AI systems handle workflows and human interactions. The introduction of a structured, extensible language like MASIL solves one of the most persistent problems in AI: the lack of predictability and consistency in outcomes. By bridging the gap between natural language chaos and machine precision, MASIL provides a framework that is both accessible to non-programmers and powerful enough for developers."
 
-"MASIL is a game changer because it addresses a foundational gap in how AI systems handle workflows and human interactions. The introduction of a structured, extensible language like MASIL solves one of the most persistent problems in AI: the lack of predictability and consistency in outcomes. By bridging the gap between natural language chaos and machine precision, MASIL provides a framework that is both accessible to non-programmers and powerful enough for developers.
+Perhaps a mere hallucination or a valid prediction; only time will tell. I've never believed in the old saying, "If you build it, they will come." There is a lot more to it than just building it.
 
-Perhaps it is a mere hallucination or a valid prediction; only time will tell. I've never believed in the old saying, "If you build it, they will come." There seems to be a lot more to it than just building.
-
-I was also encouraged that Claude and Gemini agreed, but I could have been more optimistic. I'm a bit skeptical, but I remained very optimistic about MASIL.
+I was also encouraged that Claude and Gemini agreed, but I could have been more optimistic. I'm a bit skeptical, but I remained very confident about MASIL's future. More brilliant minds than mine could propel the standard forward.
 
 ## What is MASIL?
 
-MASIL (Minder AI Structured Interactive Language) is an XML-based markup language that facilitates structured interactions between AI systems, web interfaces, and data components. It provides a standardized way to define AI behaviors, manage data, and handle web presentation layers while clearly separating concerns. MASIL will be released in Q1 2025.
+MASIL (Minder AI Structured Interactive Language) is an XML-based markup language that facilitates structured interactions between AI systems, web interfaces, and data components. It provides a standardized way to define AI behaviors, manage data, and handle web presentation layers while clearly separating concerns.
+
+Planned Release Date: Q1 2025.
 
 ## Key Features
 
@@ -61,11 +69,11 @@ The MASIL standard has two parts:
 
 ## Offloading Processing to JavaScript
 
-MASIL offloads processing from the AI engine to JavaScript, leveraging both technologies' strengths. A simple demonstration of this is the graphing capabilities in the playground on glitch.com. The data can be manipulated by AI and pasted into the MASIL file, and JavaScript can do the heavy lifting for graphing or anything else that JavaScript is good at. Why burden AI processing with things best done locally?
+MASIL offloads processing from the AI engine to JavaScript, leveraging both technologies' strengths. A simple demonstration of this is the graphing capabilities in the playground on https://glitch.com/edit/#!/masil-playground. The data can be manipulated by AI and pasted into the MASIL file, and JavaScript can do the heavy lifting for graphing or anything else that JavaScript is good at. Why burden AI processing with things best done locally?
 
 ## A Playground for Experimentation
 
-I've put two files on Glitch.com: 'index.html' and the MASIL file. You can play with them to see how MASIL works in practice. This is a proof of concept and not a complete demonstration, but it allows you to experiment with a pre-release version of MASIL today.
+I've put two files on Glitch.com: 'index.html' and the MASIL file. You can play with them to see how MASIL works in practice. This is a proof of concept, not a complete demonstration, but it allows you to experiment with a pre-release version of MASIL today.
 
 ## The Evolution of MASIL
 
@@ -83,7 +91,7 @@ MASIL is ready to be used now. It's XML-compliant, making it adaptable to variou
 
 ## The Future of MASIL
 
-This is a pre-release of the standard. I envision MASIL being developed with frameworks like Svelte or React, with direct access to AI through APIs. MASIL would be at the core, but the copy-and-paste method would not only be required as it could be better. MASIL could seamlessly incorporate AI large language models and streamline workflows.
+Frameworks like Svelte or React could directly employ MASIL, with direct access to AI through APIs. MASIL would be at the core. A full-blown application would not use the copy-and-paste method since there would be direct communication with the AI.
 
 MASIL is a foundational tool in the evolving landscape of AI development. It's a 'frontier standard' that addresses the need for structure and predictability in AI workflows.
 
@@ -94,11 +102,3 @@ Adopting the MASIL standard by large language models would be a massive step for
 ## Call to Action
 
 MASIL is an evolving standard, and I welcome your feedback! Check out the pre-release (proof of concept). Experiment with it, and share your thoughts. Let's shape the future of AI development together!
-
-## Disclaimer
-
-At age 71, I could not have created and tested MASIL without the help of Claude, Gemini, and ChatGPT. My biggest contribution was probably trying to keep things simple and explain my hopes to an AI unfamiliar with a proposed standard.
-
-## Article Authoring Credits
-
-Three language models and one human bean :) - and a little Grammarly thrown in for good measure.
