@@ -141,28 +141,6 @@
                             <p class="mb-1">Small: [size.small]</p>
                         </div>
                     </div>
-
-                    <!-- Food list -->
-                    <div class="block has-background-light p-4">
-                        <masil-list name="food" type="ol"></masil-list>
-                    </div>
-
-                    <!-- Breeds section -->
-                    <div class="block has-background-light p-4">
-                        <masil-list name="breeds" type="tags"></masil-list>
-                    </div>
-
-                    <!-- Random breeds button section -->
-                    <div class="block has-background-light p-4">
-                        <div class="level">
-                            <div class="level-item">
-                                <button id="randomBreedButton" class="button is-success">
-                                    Random Dog Breeds
-                                </button>
-                            </div>
-                        </div>
-                        <div id="randomBreedResult" class="content is-small mt-3"></div>
-                    </div>
                 </div>
 
                 <!-- Middle column - main content -->
@@ -184,6 +162,37 @@
                                 <tbody></tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Three column info section -->
+            <div class="columns is-variable is-6">
+                <!-- Food list column -->
+                <div class="column is-4">
+                    <div class="block has-background-light p-4">
+                        <masil-list name="food" type="ol"></masil-list>
+                    </div>
+                </div>
+
+                <!-- Breeds column -->
+                <div class="column is-4">
+                    <div class="block has-background-light p-4">
+                        <masil-list name="breeds" type="tags"></masil-list>
+                    </div>
+                </div>
+
+                <!-- Random breeds button column -->
+                <div class="column is-4">
+                    <div class="block has-background-light p-4">
+                        <div class="level">
+                            <div class="level-item">
+                                <button id="randomBreedButton" class="button is-success">
+                                    Random Dog Breeds
+                                </button>
+                            </div>
+                        </div>
+                        <div id="randomBreedResult" class="content is-small mt-3"></div>
                     </div>
                 </div>
             </div>
