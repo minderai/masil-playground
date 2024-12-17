@@ -85,9 +85,7 @@ MASIL is ready to be used now. It's XML-compliant, making it adaptable to variou
 
 This is a pre-release of the standard. I envision MASIL being develope with frameworks like Svelte or React with direct access to AI through API's. MASIL would be at the core, , but the copy And Pastings method would not only be required as it is not ideal. This would allow for seamless incorporation of AI large language models and more streamlined workflows.
 
-## A Frontier Standard
-
-MASIL is a foundational element in the evolving landscape of AI development. It's a 'frontier standard' that addresses the need for structure and predictability in AI workflows.
+MASIL is a foundational tool in the evolving landscape of AI development. It's a 'frontier standard' that addresses the need for structure and predictability in AI workflows.
 
 I carefully chose the acronym MASIL to be distinctive and memorable. While coincidentally sharing a name with a Korean hair care brand, MASIL in the tech world represents a unique standard for AI interaction. My vision extends beyond the name—I hope to develop open-source AI applications under the MinderAI.org brand that embody this innovative approach, and making all tasks simpler.
 
