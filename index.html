@@ -287,6 +287,16 @@
                     </div>
                 </details>
             </div>
+
+            <!-- HTML Source section -->
+            <div class="block has-background-light p-4">
+                <details>
+                    <summary class="title is-6 has-text-weight-bold">View HTML source code</summary>
+                    <div class="content mt-2">
+                        <pre><code class="language-html" id="htmlSource">Loading...</code></pre>
+                    </div>
+                </details>
+            </div>
         </div>
     </section>
 
@@ -871,6 +881,15 @@
                     if (sourceElement) {
                         sourceElement.textContent = masilText;
                         hljs.highlightElement(sourceElement);
+                    }
+
+                    // Load HTML source code
+                    const htmlResponse = await fetch('index.html');
+                    const htmlText = await htmlResponse.text();
+                    const htmlSourceElement = document.getElementById('htmlSource');
+                    if (htmlSourceElement) {
+                        htmlSourceElement.textContent = htmlText;
+                        hljs.highlightElement(htmlSourceElement);
                     }
 
                     await this.replacePlaceholdersInDOM();
