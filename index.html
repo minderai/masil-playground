@@ -14,11 +14,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
     <title>[doc.title]</title>
     <style>
-        /* Apply smooth transitions to all elements */
-        * {
-            transition: all 0.5s ease;
-        }
-
         /* Make table headers clickable */
         th {
             cursor: pointer;
@@ -28,13 +23,6 @@
         th:hover {
             background-color: rgba(0, 0, 0, 0.05);
         }
-
-        /* Theme transition */
-        * {
-            transition: all 0.3s ease;
-        }
-
-
 
         /* Skeleton loading styles */
         .skeleton {
@@ -794,21 +782,31 @@
             setupTheme() {
                 const themeToggle = document.getElementById('theme-toggle');
                 if (themeToggle) {
+                    // Check for saved theme preference
+                    const savedTheme = localStorage.getItem('theme') || 'light';
+                    if (savedTheme === 'dark') {
+                        document.body.classList.add('has-background-dark');
+                        document.body.classList.add('has-text-light');
+                    }
+
+                    // Update icon based on current theme
+                    const icon = themeToggle.querySelector('i');
+                    icon.classList.toggle('fa-sun', savedTheme === 'light');
+                    icon.classList.toggle('fa-moon', savedTheme === 'dark');
+
                     themeToggle.addEventListener('click', () => {
+                        // Toggle dark mode classes
+                        document.body.classList.toggle('has-background-dark');
+                        document.body.classList.toggle('has-text-light');
+
                         // Toggle the icon
                         const icon = themeToggle.querySelector('i');
                         icon.classList.toggle('fa-sun');
                         icon.classList.toggle('fa-moon');
 
-                        // Toggle theme classes
-                        document.documentElement.classList.toggle('theme-dark');
-                        document.body.classList.toggle('theme-dark');
-                        document.querySelector('.hero').classList.toggle('theme-dark');
-
-                        // Toggle on all blocks and tables
-                        document.querySelectorAll('.block, .table, .content, .footer').forEach(element => {
-                            element.classList.toggle('theme-dark');
-                        });
+                        // Save preference
+                        const newTheme = document.body.classList.contains('has-background-dark') ? 'dark' : 'light';
+                        localStorage.setItem('theme', newTheme);
                     });
                 }
             }
