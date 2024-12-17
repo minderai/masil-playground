@@ -104,13 +104,6 @@
     <section class="hero is-primary">
         <div class="hero-head">
             <div class="container">
-                <div class="is-flex is-justify-content-flex-end p-3">
-                    <button class="button is-dark is-rounded" id="theme-toggle" aria-label="Toggle theme">
-                        <span class="icon is-small">
-                            <i class="fas fa-sun"></i>
-                        </span>
-                    </button>
-                </div>
             </div>
         </div>
         <div class="hero-body">
@@ -779,38 +772,6 @@
                 }
             }
 
-            setupTheme() {
-                const themeToggle = document.getElementById('theme-toggle');
-                if (themeToggle) {
-                    // Check for saved theme preference
-                    const savedTheme = localStorage.getItem('theme') || 'light';
-                    if (savedTheme === 'dark') {
-                        document.body.classList.add('has-background-dark');
-                        document.body.classList.add('has-text-light');
-                    }
-
-                    // Update icon based on current theme
-                    const icon = themeToggle.querySelector('i');
-                    icon.classList.toggle('fa-sun', savedTheme === 'light');
-                    icon.classList.toggle('fa-moon', savedTheme === 'dark');
-
-                    themeToggle.addEventListener('click', () => {
-                        // Toggle dark mode classes
-                        document.body.classList.toggle('has-background-dark');
-                        document.body.classList.toggle('has-text-light');
-
-                        // Toggle the icon
-                        const icon = themeToggle.querySelector('i');
-                        icon.classList.toggle('fa-sun');
-                        icon.classList.toggle('fa-moon');
-
-                        // Save preference
-                        const newTheme = document.body.classList.contains('has-background-dark') ? 'dark' : 'light';
-                        localStorage.setItem('theme', newTheme);
-                    });
-                }
-            }
-
             async replacePlaceholdersInDOM() {
                 // Replace placeholders in text nodes
                 const walker = document.createTreeWalker(
@@ -908,7 +869,6 @@
                     await this.populateTable();
                     await this.applyMasilStyles();
                     this.setupRandomBreeds();
-                    this.setupTheme();
                     this.updateTitleElements();
 
                     this.initialized = true;
