@@ -44,9 +44,9 @@ Building AI apps can be chaotic. MASIL brings order by:
 
 - Bridging the gap between natural language and machine precision.
 
-## Super Prompts: MASIL's Best Feature
+## Super Prompts: MASIL's Special Sauce
 
-Super Prompts let you define precise inputs and outputs for AI interactions, improving reliability and predictability. The MASIL document can be copied and pasted into most AIs, which will understand the structure and act accordingly. These interactions can then be roundtripped back into the MASIL file. This capability is a natural feature of MASIL and can be used today.
+Super Prompts let you define precise inputs and outputs for AI interactions, improving reliability and predictability. The MASIL document can be copied and pasted into most AIs, which will understand the structure and act accordingly. These interactions can then be round tripped back into the MASIL file. This capability is a natural feature of MASIL and can be used today.
 
 ## MASIL: A Two-Part Approach
 
@@ -54,7 +54,7 @@ The MASIL standard has two parts:
 
 1.  A strict XML-compliant XSD schema for defining data and workflows.
 
-2.  The ability to address AI with natural language. This means authors can use natural language, a structured approach, or a combination of both.
+2.  A relaxed schema, not XML, with the ability to address AI with natural language. This means authors can use natural language, a structured approach, or a combination of both.
 
 ## Offloading Processing to JavaScript
 
