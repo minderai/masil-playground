@@ -80,7 +80,7 @@ MASIL is ready to be used now. It's XML-compliant, making it adaptable to variou
 
 ## The Future of MASIL
 
-This is a pre-release of the standard. I envision MASIL being integrated into frameworks like Svelte or React. This would allow for seamless incorporation of AI large language models and more streamlined workflows.
+This is a pre-release of the standard. I envision MASIL being develope with frameworks like Svelte or React with direct access to AI through API's. MASIL would be at the core, , but the copy And Pastings method would not only be required as it is not ideal. This would allow for seamless incorporation of AI large language models and more streamlined workflows.
 
 ## A Frontier Standard
 
@@ -94,7 +94,7 @@ MASIL is an evolving standard, and I welcome your feedback! Check out the pre-re
 
 ## Disclaimer
 
-At age 71, I could not have created and tested MASIL without the help of Claude, Gemini, and ChatGPT. My biggest contribution was probably trying to keep things simple.
+At age 71, I could not have created and tested MASIL without the help of Claude, Gemini, and ChatGPT. My biggest contribution was probably trying to keep things simple and explain my hopes to a AI that was unfamiliar with a proposed standard.
 
 ## Article Credits
 
