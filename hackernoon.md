@@ -7,7 +7,7 @@ MASIL conducts a technological orchestra with AI as the virtuoso performer. The 
 ## In a rush? -Play with MASIL here:
 
 click on Glitch.com link
-https:aiminder.org
+[Glitch](https://glitch.com/edit/#!/masil-playground)
 
 #Introduction
 My Company, SimplerTasks Company, will soon announce the pre-release of MASIL (Minder AI Structured Interactive Language) as a fully open standard under the MIT license. This innovative specification is designed to revolutionize how developers and non-programmers interact with AI systems. This frontier structured language combines the simplicity of XML with powerful AI-centric features, setting a new foundation for AI application development.
@@ -67,7 +67,7 @@ The MASIL standard has two parts:
 
 ## Offloading Processing to JavaScript
 
-MASIL offloads processing from the AI engine to JavaScript, leveraging both technologies' strengths. A simple demonstration of this is the graphing capabilities in the playground on https://glitch.com/edit/#!/masil-playground. The data can be manipulated by AI and pasted into the MASIL file, and JavaScript can do the heavy lifting for graphing or anything else that JavaScript is good at. Why burden AI processing with things best done locally?
+MASIL offloads processing from the AI engine to JavaScript, leveraging both technologies' strengths. A simple demonstration of this is the graphing capabilities in the playground --link at top. The data can be manipulated by AI and pasted into the MASIL file, and JavaScript can do the heavy lifting for graphing or anything else that JavaScript is good at. Why burden AI processing with things best done locally?
 
 ## A Playground for Experimentation
 
